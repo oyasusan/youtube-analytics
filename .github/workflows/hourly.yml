@@ -1,0 +1,57 @@
+name: Hourly Data Collection
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # Every hour at :00
+  workflow_dispatch:       # Manual trigger via Actions UI
+
+jobs:
+  collect:
+    name: Collect YouTube Data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run hourly collection
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          CHANNEL_ID: ${{ vars.CHANNEL_ID }}
+          CHANNEL_NAME: ${{ vars.CHANNEL_NAME || '空想ロマンス' }}
+        run: uv run python scripts/collect.py
+
+      - name: Check DB size
+        run: |
+          if [ -f data/youtube_analytics.db ]; then
+            SIZE=$(du -sh data/youtube_analytics.db | cut -f1)
+            echo "DB size: $SIZE"
+          fi
+
+      - name: Commit and push data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/youtube_analytics.db logs/ || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: hourly data collection $(date -u '+%Y-%m-%d %H:%M') UTC [skip ci]"
+            git push
+          fi

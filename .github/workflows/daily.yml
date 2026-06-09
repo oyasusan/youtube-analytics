@@ -1,0 +1,94 @@
+name: Daily Analysis and Report
+
+on:
+  schedule:
+    - cron: '30 0 * * *'  # Daily at 00:30 UTC (09:30 JST)
+  workflow_dispatch:       # Manual trigger
+
+jobs:
+  analyze:
+    name: Daily Analysis + Report Generation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Install Japanese font for Matplotlib
+        run: |
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -fv
+
+      - name: Run daily analysis
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          CHANNEL_ID: ${{ vars.CHANNEL_ID }}
+          CHANNEL_NAME: ${{ vars.CHANNEL_NAME || '空想ロマンス' }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'auto' }}
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-haiku-4-5-20251001' }}
+          MEMBER_NAMES: ${{ vars.MEMBER_NAMES }}
+        run: uv run python scripts/daily_analysis.py
+
+      - name: Commit and push reports
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ reports/ graphs/ docs/ logs/ || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            REPORT_DATE=$(date -u '+%Y-%m-%d')
+            git commit -m "feat: daily report ${REPORT_DATE} [skip ci]"
+            git push
+          fi
+
+  maintenance:
+    name: DB Maintenance (Weekly)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: ${{ github.event_name == 'schedule' && contains(github.event.schedule, '0 0 * * 1') || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run maintenance
+        run: uv run python scripts/maintenance.py
+
+      - name: Commit if DB changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/youtube_analytics.db || true
+          git diff --staged --quiet || git commit -m "chore: db maintenance $(date -u '+%Y-%m-%d') [skip ci]"
+          git push || true

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ data.channel_metrics.channel_name }} チャンネル分析 {{ data.report_date }}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<style>
+  body { background: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .header-band { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 2.5rem 0 2rem; }
+  .kpi-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .15s; }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-value { font-size: 1.8rem; font-weight: 700; }
+  .kpi-delta-pos { color: #28a745; font-weight: 600; }
+  .kpi-delta-neg { color: #dc3545; font-weight: 600; }
+  .section-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 1.5rem; }
+  .video-badge-shorts { background: #ff4b5c; color: white; }
+  .video-badge-regular { background: #4c9be8; color: white; }
+  .chart-img { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+  .ai-section { background: linear-gradient(135deg, #667eea22, #764ba222); border-left: 4px solid #667eea; border-radius: 0 8px 8px 0; }
+  table { font-size: .88rem; }
+  .table-hover tbody tr:hover { background: #f0f4ff; }
+  .footer { background: #1a1a2e; color: rgba(255,255,255,.6); padding: 1.5rem 0; margin-top: 3rem; }
+  .score-bar { height: 6px; background: #e9ecef; border-radius: 3px; }
+  .score-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #4c9be8, #667eea); }
+</style>
+</head>
+<body>
+
+<div class="header-band">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="mb-1 fw-bold">📊 {{ data.channel_metrics.channel_name }}</h1>
+        <p class="mb-0 opacity-75">チャンネル分析レポート &nbsp;|&nbsp; {{ data.report_date }}</p>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-light text-dark fs-6">自動生成</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    {% set cm = data.channel_metrics %}
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">👥 登録者数</div>
+        <div class="kpi-value">{{ cm.current_subscribers | format_int }}</div>
+        <div class="{% if cm.delta_subscribers_24h >= 0 %}kpi-delta-pos{% else %}kpi-delta-neg{% endif %} small">
+          {{ "%+d" | format(cm.delta_subscribers_24h) }} (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">▶ 総再生数</div>
+        <div class="kpi-value">{{ cm.current_views | format_int }}</div>
+        <div class="{% if cm.delta_views_24h >= 0 %}kpi-delta-pos{% else %}kpi-delta-neg{% endif %} small">
+          {{ "%+d" | format(cm.delta_views_24h) }} (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">🎬 動画本数</div>
+        <div class="kpi-value">{{ cm.current_video_count }}</div>
+        <div class="text-muted small">月間 {{ cm.posts_per_month | format_float2 }}本</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">📱 Shorts比率</div>
+        <div class="kpi-value">{{ cm.shorts_ratio | format_pct }}</div>
+        <div class="text-muted small">週 {{ cm.posts_per_week | format_float2 }}本</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  {% if data.graph_paths %}
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">📈 グラフ</h4>
+    <div class="row g-3">
+      {% for name, path in data.graph_paths.items() %}
+      <div class="col-12 col-lg-6">
+        <img src="../{{ path }}" alt="{{ name }}" class="chart-img w-100">
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Rising Videos -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">🚀 急上昇動画 TOP10（過去24時間）</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th><th>タイトル</th><th>種別</th><th>再生数</th>
+            <th>+24h</th><th>勢い指数</th><th>バズ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in data.rising_videos[:10] %}
+          <tr>
+            <td class="text-muted">{{ loop.index }}</td>
+            <td><a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none">{{ v.title[:50] }}</a></td>
+            <td><span class="badge {% if v.video_type == 'shorts' %}video-badge-shorts{% else %}video-badge-regular{% endif %}">{{ v.video_type }}</span></td>
+            <td>{{ v.current_views | format_int }}</td>
+            <td class="kpi-delta-pos">+{{ v.delta_24h | format_int }}</td>
+            <td>{{ v.momentum_index | format_float2 }}</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:{{ v.buzz_score }}%"></div></div>
+              <small>{{ v.buzz_score | format_float2 }}</small>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="text-center text-muted">データなし</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Declining Videos -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">📉 急減速動画 TOP10</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>#</th><th>タイトル</th><th>種別</th><th>7日増加</th><th>24h増加</th></tr>
+        </thead>
+        <tbody>
+          {% for v in data.declining_videos[:10] %}
+          <tr>
+            <td class="text-muted">{{ loop.index }}</td>
+            <td><a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none">{{ v.title[:50] }}</a></td>
+            <td><span class="badge {% if v.video_type == 'shorts' %}video-badge-shorts{% else %}video-badge-regular{% endif %}">{{ v.video_type }}</span></td>
+            <td>{{ v.delta_7d | format_int }}</td>
+            <td class="kpi-delta-neg">{{ v.delta_24h | format_int }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-center text-muted">データなし</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Growth Rankings -->
+  <div class="row g-3 mb-4">
+    {% for period, title, key in [('top_today', '今日 TOP10 (24h)', 'delta_24h'), ('top_week', '今週 TOP10 (7日)', 'delta_7d'), ('top_month', '今月 TOP10 (30日)', 'delta_30d')] %}
+    <div class="col-12 col-md-4">
+      <div class="card section-card p-3 h-100">
+        <h5 class="mb-3">🏆 {{ title }}</h5>
+        <ol class="ps-3">
+          {% for v in data[period] %}
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none text-dark">
+              {{ v.title[:30] }}{% if v.title | length > 30 %}…{% endif %}
+            </a>
+            <br><span class="kpi-delta-pos">+{{ v[key] | format_int }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Content Type + Shorts -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4 h-100">
+        <h4 class="mb-3">🎬 コンテンツタイプ別</h4>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead class="table-light"><tr><th>タイプ</th><th>本数</th><th>平均再生数</th></tr></thead>
+            <tbody>
+              {% for s in data.content_type_stats %}
+              <tr><td>{{ s.content_type }}</td><td>{{ s.video_count }}</td><td>{{ s.avg_views | format_int }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4 h-100">
+        <h4 class="mb-3">📱 Shorts vs 通常動画</h4>
+        <table class="table table-sm">
+          <thead class="table-light"><tr><th></th><th>Shorts</th><th>通常動画</th></tr></thead>
+          <tbody>
+            <tr><td>30日平均成長率</td><td>{{ data.shorts_growth_rate | format_pct }}</td><td>{{ data.regular_growth_rate | format_pct }}</td></tr>
+            <tr><td>動画本数</td>
+              <td>{{ data.all_videos | selectattr('video_type', 'equalto', 'shorts') | list | length }}本</td>
+              <td>{{ data.all_videos | selectattr('video_type', 'equalto', 'regular') | list | length }}本</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hit Predictions -->
+  {% if data.hit_predictions %}
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">🔮 ヒット予測（7日以内に急成長の可能性）</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light"><tr><th>#</th><th>タイトル</th><th>予測スコア</th><th>現在再生数</th></tr></thead>
+        <tbody>
+          {% for v in data.hit_predictions[:10] %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none">{{ v.title[:50] }}</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:{{ v.hit_prediction_score }}%"></div></div>
+              <small>{{ v.hit_prediction_score | format_float2 }}/100</small>
+            </td>
+            <td>{{ v.current_views | format_int }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Day/Hour Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4">
+        <h4 class="mb-3">📅 曜日別投稿分析</h4>
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>曜日</th><th>投稿数</th><th>平均再生数</th></tr></thead>
+          <tbody>
+            {% for s in data.day_of_week_stats %}
+            <tr><td>{{ s.day_name }}</td><td>{{ s.video_count }}</td><td>{{ s.avg_views | format_int }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% if data.member_stats %}
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4">
+        <h4 class="mb-3">👤 メンバー別分析</h4>
+        <table class="table table-sm mb-0">
+          <thead class="table-light"><tr><th>メンバー</th><th>動画数</th><th>平均再生数</th></tr></thead>
+          <tbody>
+            {% for s in data.member_stats %}
+            <tr><td>{{ s.member_name }}</td><td>{{ s.video_count }}</td><td>{{ s.avg_views | format_int }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- AI Analysis -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">🤖 AI分析レポート</h4>
+    {% if data.ai_analysis %}
+    <div class="ai-section p-3">
+      <div id="ai-content" class="markdown-body">
+        {{ data.ai_analysis | replace('\n', '<br>') }}
+      </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mb-0">
+      AI分析は利用できません。環境変数でAIプロバイダーを設定してください（OLLAMA_BASE_URL / OPENAI_API_KEY / CLAUDE_API_KEY）。
+    </div>
+    {% endif %}
+  </div>
+
+</div><!-- /container -->
+
+<footer class="footer text-center">
+  <div class="container">
+    <small>Generated {{ generated_at }} UTC &nbsp;|&nbsp; {{ data.channel_metrics.channel_name }} Analytics System</small>
+  </div>
+</footer>
+</body>
+</html>

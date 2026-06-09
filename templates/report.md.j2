@@ -1,0 +1,141 @@
+# {{ data.channel_metrics.channel_name }} チャンネル分析レポート
+
+**レポート日時**: {{ data.report_date }} (UTC: {{ generated_at }})
+
+---
+
+## 📊 KPI サマリー
+
+| 指標 | 現在値 | 前日比 | 前週比 | 前月比 |
+|------|--------|--------|--------|--------|
+| 登録者数 | {{ data.channel_metrics.current_subscribers | format_int }}人 | {{ data.channel_metrics.delta_subscribers_24h | format_int }} | {{ data.channel_metrics.delta_subscribers_7d | format_int }} | {{ data.channel_metrics.delta_subscribers_30d | format_int }} |
+| 総再生数 | {{ data.channel_metrics.current_views | format_int }}回 | {{ data.channel_metrics.delta_views_24h | format_int }} | {{ data.channel_metrics.delta_views_7d | format_int }} | {{ data.channel_metrics.delta_views_30d | format_int }} |
+| 総動画数 | {{ data.channel_metrics.current_video_count }}本 | — | — | — |
+| 月間投稿数 | {{ data.channel_metrics.posts_per_month | format_float2 }}本 | — | — | — |
+| Shorts比率 | {{ data.channel_metrics.shorts_ratio | format_pct }} | — | — | — |
+
+---
+
+## 🚀 急上昇動画 TOP10（過去24時間）
+
+| # | タイトル | 種別 | 再生数 | +24h | 勢い指数 | バズスコア |
+|---|--------|------|--------|------|---------|----------|
+{% for v in data.rising_videos[:10] %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.video_type }} | {{ v.current_views | format_int }} | +{{ v.delta_24h | format_int }} | {{ v.momentum_index | format_float2 }} | {{ v.buzz_score | format_float2 }} |
+{% else %}| — | データなし | — | — | — | — | — |
+{% endfor %}
+
+---
+
+## 📉 急減速動画 TOP10
+
+| # | タイトル | 種別 | 7日増加 | 24h増加 | 差分 |
+|---|--------|------|--------|--------|------|
+{% for v in data.declining_videos[:10] %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.video_type }} | {{ v.delta_7d | format_int }} | {{ v.delta_24h | format_int }} | {{ (v.delta_7d - v.delta_24h * 7) | format_int }} |
+{% else %}| — | データなし | — | — | — | — |
+{% endfor %}
+
+---
+
+## 🏆 成長ランキング
+
+### 今日伸びた動画 TOP10（24時間）
+
+| # | タイトル | +再生数 | 現在再生数 |
+|---|--------|--------|----------|
+{% for v in data.top_today %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | +{{ v.delta_24h | format_int }} | {{ v.current_views | format_int }} |
+{% endfor %}
+
+### 今週伸びた動画 TOP10（7日間）
+
+| # | タイトル | +再生数 | 現在再生数 |
+|---|--------|--------|----------|
+{% for v in data.top_week %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | +{{ v.delta_7d | format_int }} | {{ v.current_views | format_int }} |
+{% endfor %}
+
+### 今月伸びた動画 TOP10（30日間）
+
+| # | タイトル | +再生数 | 現在再生数 |
+|---|--------|--------|----------|
+{% for v in data.top_month %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | +{{ v.delta_30d | format_int }} | {{ v.current_views | format_int }} |
+{% endfor %}
+
+---
+
+## 📱 Shorts vs 通常動画
+
+| 指標 | Shorts | 通常動画 |
+|------|--------|--------|
+| 30日平均成長率 | {{ data.shorts_growth_rate | format_pct }} | {{ data.regular_growth_rate | format_pct }} |
+| 動画本数 | {{ data.all_videos | selectattr('video_type', 'equalto', 'shorts') | list | length }}本 | {{ data.all_videos | selectattr('video_type', 'equalto', 'regular') | list | length }}本 |
+
+---
+
+## 🎬 コンテンツタイプ分析
+
+| タイプ | 本数 | 平均再生数 | 総再生数 |
+|-------|------|----------|--------|
+{% for s in data.content_type_stats %}| {{ s.content_type }} | {{ s.video_count }}本 | {{ s.avg_views | format_int }} | {{ s.total_views | format_int }} |
+{% endfor %}
+
+---
+
+## 🔮 ヒット予測（今後7日以内に急成長の可能性）
+
+| # | タイトル | スコア | 現在再生数 |
+|---|--------|-------|----------|
+{% for v in data.hit_predictions[:10] %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.hit_prediction_score | format_float2 }}/100 | {{ v.current_views | format_int }} |
+{% else %}| — | 対象なし | — | — |
+{% endfor %}
+
+---
+
+## ⏰ 投稿曜日・時間帯分析
+
+### 曜日別
+
+| 曜日 | 投稿数 | 平均再生数 |
+|------|------|----------|
+{% for s in data.day_of_week_stats %}| {{ s.day_name }} | {{ s.video_count }}本 | {{ s.avg_views | format_int }} |
+{% endfor %}
+
+### 時間帯別（JST・上位5）
+
+{% set top_hours = data.hour_stats | sort(attribute='avg_views', reverse=True) %}
+| 時間帯 | 投稿数 | 平均再生数 |
+|-------|------|----------|
+{% for s in top_hours[:5] %}| {{ s.hour }}時台 | {{ s.video_count }}本 | {{ s.avg_views | format_int }} |
+{% endfor %}
+
+---
+
+{% if data.member_stats %}
+## 👤 メンバー別分析
+
+| メンバー | 動画数 | 平均再生数 | 総再生数 |
+|---------|------|----------|--------|
+{% for s in data.member_stats %}| {{ s.member_name }} | {{ s.video_count }}本 | {{ s.avg_views | format_int }} | {{ s.total_views | format_int }} |
+{% endfor %}
+
+---
+{% endif %}
+
+## 🤖 AI分析
+
+{% if data.ai_analysis %}
+{{ data.ai_analysis }}
+{% else %}
+> AI分析は利用できません。環境変数でAIプロバイダーを設定してください（OLLAMA_BASE_URL / OPENAI_API_KEY / CLAUDE_API_KEY）。
+{% endif %}
+
+---
+
+## 📈 グラフ
+
+{% for name, path in data.graph_paths.items() %}
+![{{ name }}](../{{ path }})
+
+{% endfor %}
+
+---
+
+*このレポートは自動生成されました。*
