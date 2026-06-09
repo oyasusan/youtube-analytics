@@ -127,7 +127,7 @@
         {% for r in recent_reports[:20] %}
         <div class="report-link">
           <a href="report_{{ r.report_date }}.html">{{ r.report_date }} レポート</a>
-          <small class="text-muted">{{ r.report_type }}</small>
+          <small class="text-muted">{{ r.generated_at | utc_to_jst }}</small>
         </div>
         {% else %}
         <p class="text-muted">レポートなし</p>

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import logging
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+_JST = timezone(timedelta(hours=9))
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -14,6 +16,18 @@ from .database import DatabaseManager
 from .models import ReportData
 
 logger = logging.getLogger(__name__)
+
+
+def _utc_str_to_jst(utc_str: str) -> str:
+    """Convert UTC datetime string from DB to JST formatted string."""
+    try:
+        dt = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        jst_dt = dt.astimezone(_JST)
+        return jst_dt.strftime("%Y-%m-%d %H:%M JST")
+    except Exception:
+        return utc_str
 
 
 def _relative_graph_path(abs_path: str, target_dir: Path) -> str:
@@ -40,12 +54,13 @@ class Reporter:
         self._env.filters["abs"] = abs
         self._env.filters["split"] = lambda s, sep="/": s.split(sep)
         self._env.filters["basename"] = lambda s: Path(s).name
+        self._env.filters["utc_to_jst"] = _utc_str_to_jst
 
     # ── Markdown report ───────────────────────────────────────────────────────
 
     def generate_markdown(self, data: ReportData, date_str: str) -> Path:
         template = self._env.get_template("report.md.j2")
-        content = template.render(data=data, generated_at=datetime.utcnow().isoformat())
+        content = template.render(data=data, generated_at=datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST"))
         out_path = self.config.reports_dir / f"report_{date_str}.md"
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(content, encoding="utf-8")
@@ -56,7 +71,7 @@ class Reporter:
 
     def generate_html(self, data: ReportData, date_str: str) -> Path:
         template = self._env.get_template("report.html.j2")
-        content = template.render(data=data, generated_at=datetime.utcnow().isoformat())
+        content = template.render(data=data, generated_at=datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST"))
         out_path = self.config.reports_dir / f"report_{date_str}.html"
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(content, encoding="utf-8")
@@ -87,7 +102,7 @@ class Reporter:
         index_content = index_template.render(
             data=data,
             recent_reports=recent_reports,
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST"),
         )
         (docs / "index.html").write_text(index_content, encoding="utf-8")
         logger.info("GitHub Pages updated: %s", docs)

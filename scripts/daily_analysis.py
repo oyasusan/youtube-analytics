@@ -7,7 +7,7 @@ Computes daily summaries, scores, AI analysis, charts, and reports.
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -49,8 +49,9 @@ def main() -> int:
 
     channel_id: str = channel_row["channel_id"]
     channel_name: str = channel_row["channel_name"]
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+    JST = timezone(timedelta(hours=9))
+    today = datetime.now(JST).strftime("%Y-%m-%d")
+    yesterday = (datetime.now(JST) - timedelta(days=1)).strftime("%Y-%m-%d")
 
     analyzer = StatisticalAnalyzer(db, config)
 
