@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空想ロマンス - YouTube Analytics Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<style>
+  body { background: #0d1117; color: #e6edf3; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 3rem 0 2.5rem; }
+  .kpi-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.25rem; }
+  .kpi-value { font-size: 2rem; font-weight: 700; color: #58a6ff; }
+  .kpi-label { color: #8b949e; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
+  .kpi-delta-pos { color: #3fb950; }
+  .kpi-delta-neg { color: #f85149; }
+  .section { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .report-link { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: .75rem 1rem; margin-bottom: .5rem; display: flex; justify-content: space-between; align-items: center; }
+  .report-link a { color: #58a6ff; text-decoration: none; }
+  .report-link a:hover { color: #79c0ff; }
+  .chart-img { max-width: 100%; border-radius: 8px; border: 1px solid #30363d; }
+  .badge-shorts { background: #ff4b5c22; color: #ff4b5c; border: 1px solid #ff4b5c44; }
+  .badge-regular { background: #4c9be822; color: #4c9be8; border: 1px solid #4c9be844; }
+  table { color: #e6edf3; }
+  .table-dark-custom thead th { background: #21262d; border-color: #30363d; }
+  .table-dark-custom tbody tr:hover td { background: #1f262f; }
+  .table-dark-custom td, .table-dark-custom th { border-color: #30363d; }
+  a { color: #58a6ff; }
+  h2, h3, h4, h5 { color: #f0f6fc; }
+</style>
+</head>
+<body>
+
+<div class="hero text-white">
+  <div class="container">
+    <div class="row align-items-center mb-3">
+      <div class="col">
+        <h1 class="fw-bold mb-1">📊 空想ロマンス</h1>
+        <p class="opacity-75 mb-0">YouTube Analytics Dashboard &nbsp;|&nbsp; 最終更新: 2026-06-09</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- KPI Row -->
+  
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">登録者数</div>
+        <div class="kpi-value">969</div>
+        <div class="kpi-delta-pos small">
+          +0 (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">総再生数</div>
+        <div class="kpi-value">377,961</div>
+        <div class="kpi-delta-pos small">
+          +0 (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">動画本数</div>
+        <div class="kpi-value">228</div>
+        <div class="text-muted small">月間 32.00本</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">Shorts比率</div>
+        <div class="kpi-value">78.3%</div>
+        <div class="text-muted small">週 7.39本</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphs -->
+  
+  <div class="section mb-4">
+    <h4 class="mb-3">📈 最新グラフ</h4>
+    <div class="row g-3">
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/posting_frequency.png" alt="posting_frequency" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/video_growth_comparison.png" alt="video_growth_comparison" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/day_of_week_analysis.png" alt="day_of_week_analysis" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/hour_analysis.png" alt="hour_analysis" class="chart-img w-100">
+      </div>
+      
+    </div>
+  </div>
+  
+
+  <!-- Top Videos + Report List Side by Side -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-7">
+      <div class="section h-100">
+        <h4 class="mb-3">🚀 急上昇動画 TOP10（24h）</h4>
+        <div class="table-responsive">
+          <table class="table table-sm table-dark-custom align-middle mb-0">
+            <thead><tr><th>#</th><th>タイトル</th><th>+24h</th><th>勢い</th></tr></thead>
+            <tbody>
+              
+              <tr><td colspan="4" class="text-center text-muted">データなし</td></tr>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-5">
+      <div class="section h-100">
+        <h4 class="mb-3">📋 過去レポート</h4>
+        
+        <p class="text-muted">レポートなし</p>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Types -->
+  <div class="section mb-4">
+    <h4 class="mb-3">🎬 コンテンツタイプ別集計</h4>
+    <div class="table-responsive">
+      <table class="table table-sm table-dark-custom mb-0">
+        <thead><tr><th>タイプ</th><th>本数</th><th>平均再生数</th><th>総再生数</th></tr></thead>
+        <tbody>
+          
+          <tr><td>shorts</td><td>180</td><td>1,472</td><td>265,038</td></tr>
+          
+          <tr><td>mv</td><td>6</td><td>8,949</td><td>53,698</td></tr>
+          
+          <tr><td>announcement</td><td>23</td><td>1,896</td><td>43,625</td></tr>
+          
+          <tr><td>live</td><td>19</td><td>831</td><td>15,794</td></tr>
+          
+          <tr><td>other</td><td>2</td><td>132</td><td>264</td></tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer class="text-center py-3" style="color:#8b949e; border-top: 1px solid #30363d;">
+  <small>空想ロマンス Analytics &nbsp;|&nbsp; Generated 2026-06-09T16:22:15.692846 UTC</small>
+</footer>
+</body>
+</html>
