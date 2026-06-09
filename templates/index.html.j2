@@ -87,7 +87,7 @@
     <div class="row g-3">
       {% for name, path in data.graph_paths.items() %}
       <div class="col-12 col-lg-6">
-        <img src="graphs/{{ path | replace('graphs/', '') | replace('\\', '/') | split('/') | last }}" alt="{{ name }}" class="chart-img w-100">
+        <img src="graphs/{{ path | basename }}" alt="{{ name }}" class="chart-img w-100">
       </div>
       {% endfor %}
     </div>

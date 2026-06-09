@@ -38,6 +38,8 @@ class Reporter:
         self._env.filters["format_pct"] = lambda v: f"{v:.1%}"
         self._env.filters["format_float2"] = lambda v: f"{v:.2f}"
         self._env.filters["abs"] = abs
+        self._env.filters["split"] = lambda s, sep="/": s.split(sep)
+        self._env.filters["basename"] = lambda s: Path(s).name
 
     # ── Markdown report ───────────────────────────────────────────────────────
 
