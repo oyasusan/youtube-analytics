@@ -54,7 +54,6 @@ Thumbs.db
 
 # Project specific
 logs/*.log
-data/youtube_analytics.db
 
 # Keep directory stubs
 !data/.gitkeep

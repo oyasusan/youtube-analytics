@@ -21,10 +21,11 @@ def main() -> int:
 
     logger.info("=== Maintenance start ===")
 
-    db = DatabaseManager(config.db_path)
     if not config.db_path.exists():
-        logger.error("Database not found: %s", config.db_path)
-        return 1
+        logger.info("Database not found, skipping maintenance: %s", config.db_path)
+        return 0
+
+    db = DatabaseManager(config.db_path)
 
     size_before = db.get_db_size_mb()
     logger.info("DB size before: %.1f MB", size_before)
