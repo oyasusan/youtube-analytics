@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 import httpx
 
@@ -63,7 +63,7 @@ Markdownフォーマットで出力してください。
 """
 
 
-def _format_videos(videos: list[object]) -> str:  # type: ignore[type-arg]
+def _format_videos(videos: list[Any]) -> str:
     lines: list[str] = []
     for i, v in enumerate(videos[:5], 1):
         from .models import GrowthMetrics
@@ -77,7 +77,7 @@ def _format_videos(videos: list[object]) -> str:  # type: ignore[type-arg]
     return "\n".join(lines) if lines else "データなし"
 
 
-def _format_content_types(stats: list[object]) -> str:  # type: ignore[type-arg]
+def _format_content_types(stats: list[Any]) -> str:
     lines: list[str] = []
     for s in stats[:6]:
         from .models import ContentTypeStats
@@ -89,7 +89,7 @@ def _format_content_types(stats: list[object]) -> str:  # type: ignore[type-arg]
     return "\n".join(lines) if lines else "データなし"
 
 
-def _format_hit_predictions(videos: list[object]) -> str:  # type: ignore[type-arg]
+def _format_hit_predictions(videos: list[Any]) -> str:
     lines: list[str] = []
     for i, v in enumerate(videos[:5], 1):
         from .models import GrowthMetrics
@@ -217,7 +217,7 @@ class ClaudeProvider(AIProvider):
             max_tokens=2048,
             messages=[{"role": "user", "content": prompt}],
         )
-        text = msg.content[0].text if msg.content else ""
+        text = msg.content[0].text if msg.content else ""  # type: ignore[union-attr]
         tokens = msg.usage.input_tokens if msg.usage else len(prompt) // 4
         return text, self.model, tokens
 

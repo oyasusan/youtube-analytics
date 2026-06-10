@@ -44,7 +44,7 @@ class StatisticalAnalyzer:
         old = self.db.get_video_snapshot_at(video_id, then)
         if not latest or not old:
             return 0
-        return max(0, latest["view_count"] - old["view_count"])
+        return int(max(0, latest["view_count"] - old["view_count"]))
 
     def _safe_rate(self, new_val: float, old_val: float) -> float:
         """Return (new - old) / old as a fraction, or 0 if old is zero."""
@@ -74,7 +74,7 @@ class StatisticalAnalyzer:
             days_span = max(1, (now - datetime.fromisoformat(first[0]["recorded_at"])).days)
             avg_daily = max(1, (latest["view_count"] - first[0]["view_count"]) / days_span)
 
-        return delta_24h / avg_daily
+        return float(delta_24h) / avg_daily
 
     # ── Buzz score ────────────────────────────────────────────────────────────
 

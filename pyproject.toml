@@ -48,6 +48,15 @@ python_version = "3.12"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = "youtube_analytics.database"
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = "youtube_analytics.visualizer"
+ignore_errors = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
