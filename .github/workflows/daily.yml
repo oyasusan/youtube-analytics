@@ -67,6 +67,7 @@ jobs:
           else
             REPORT_DATE=$(date -u '+%Y-%m-%d')
             git commit -m "feat: daily report ${REPORT_DATE} [skip ci]"
+            git pull --rebase origin main
             git push
           fi
 
