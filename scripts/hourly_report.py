@@ -54,6 +54,7 @@ def main() -> int:
         logger.error("No channel snapshot found.")
         return 1
 
+    # Subscriber delta: channel-level only (no video-level equivalent)
     prev_ch_1h = db.get_channel_snapshot_at(channel_id, now - timedelta(hours=1))
     prev_ch_24h = db.get_channel_snapshot_at(channel_id, now - timedelta(hours=24))
 
@@ -63,9 +64,7 @@ def main() -> int:
         return int(latest_ch[field]) - int(prev[field])  # type: ignore[index]
 
     delta_subs_1h = ch_delta("subscriber_count", prev_ch_1h)
-    delta_views_1h = ch_delta("view_count", prev_ch_1h)
     delta_subs_24h = ch_delta("subscriber_count", prev_ch_24h)
-    delta_views_24h = ch_delta("view_count", prev_ch_24h)
 
     all_videos = db.get_all_videos(channel_id)
     rows: list[LiveVideoRow] = []
@@ -94,6 +93,10 @@ def main() -> int:
                 delta_24h=_delta(24),
             )
         )
+
+    # View deltas: sum across all videos (more responsive than channel-level API cache)
+    delta_views_1h = sum(r.delta_1h for r in rows)
+    delta_views_24h = sum(r.delta_24h for r in rows)
 
     top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:20]
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:20]
