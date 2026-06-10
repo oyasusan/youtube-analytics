@@ -8,8 +8,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-import logging
-
 from youtube_analytics.config import get_config
 from youtube_analytics.database import DatabaseManager
 from youtube_analytics.logging_config import setup_logging

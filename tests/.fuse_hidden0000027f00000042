@@ -5,6 +5,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import pytest
+
 from youtube_analytics.database import DatabaseManager
 from youtube_analytics.models import ChannelSnapshot, Video, VideoSnapshot
 

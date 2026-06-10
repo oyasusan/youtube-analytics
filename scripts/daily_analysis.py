@@ -12,8 +12,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-import logging
-
 from youtube_analytics.ai_analyzer import AIAnalyzer
 from youtube_analytics.analyzer import StatisticalAnalyzer
 from youtube_analytics.config import get_config
@@ -49,9 +47,8 @@ def main() -> int:
 
     channel_id: str = channel_row["channel_id"]
     channel_name: str = channel_row["channel_name"]
-    JST = timezone(timedelta(hours=9))
-    today = datetime.now(JST).strftime("%Y-%m-%d")
-    yesterday = (datetime.now(JST) - timedelta(days=1)).strftime("%Y-%m-%d")
+    jst = timezone(timedelta(hours=9))
+    today = datetime.now(jst).strftime("%Y-%m-%d")
 
     analyzer = StatisticalAnalyzer(db, config)
 
@@ -75,8 +72,12 @@ def main() -> int:
             subscriber_count=latest_ch["subscriber_count"],
             view_count=latest_ch["view_count"],
             video_count=latest_ch["video_count"],
-            subscriber_delta=latest_ch["subscriber_count"] - (prev_ch["subscriber_count"] if prev_ch else latest_ch["subscriber_count"]),
-            view_delta=latest_ch["view_count"] - (prev_ch["view_count"] if prev_ch else latest_ch["view_count"]),
+            subscriber_delta=(
+                latest_ch["subscriber_count"] - (prev_ch["subscriber_count"] if prev_ch else latest_ch["subscriber_count"])
+            ),
+            view_delta=(
+                latest_ch["view_count"] - (prev_ch["view_count"] if prev_ch else latest_ch["view_count"])
+            ),
             new_video_count=new_videos,
             shorts_count=shorts_count,
             regular_count=regular_count,

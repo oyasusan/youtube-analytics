@@ -8,8 +8,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from youtube_analytics.config import get_config
 from youtube_analytics.collector import YouTubeCollector
+from youtube_analytics.config import get_config
 
 
 def main() -> int:
@@ -26,7 +26,7 @@ def main() -> int:
         channel_id, playlist_id = collector._search_channel_by_name(name)
         print(f"Channel ID:  {channel_id}")
         print(f"Playlist ID: {playlist_id}")
-        print(f"\nAdd to .env or GitHub Variables:")
+        print("\nAdd to .env or GitHub Variables:")
         print(f"CHANNEL_ID={channel_id}")
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

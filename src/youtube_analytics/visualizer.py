@@ -8,16 +8,16 @@ from pathlib import Path
 from typing import Optional
 
 import matplotlib
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import pandas as pd
 
 matplotlib.use("Agg")
 matplotlib.rcParams["font.family"] = ["DejaVu Sans", "IPAexGothic", "Noto Sans CJK JP", "sans-serif"]
 matplotlib.rcParams["axes.unicode_minus"] = False
 
-from .database import DatabaseManager
-from .models import DayOfWeekStats, GrowthMetrics, HourStats
+from .database import DatabaseManager  # noqa: E402
+from .models import DayOfWeekStats, GrowthMetrics, HourStats  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +138,7 @@ class Visualizer:
         colors = [_PALETTE[0] if m.video_type == "shorts" else _PALETTE[1] for m in top]
 
         fig, ax = plt.subplots(figsize=(10, max(4, top_n * 0.45)))
-        bars = ax.barh(range(len(labels)), values, color=colors)
+        ax.barh(range(len(labels)), values, color=colors)
         ax.set_yticks(range(len(labels)))
         ax.set_yticklabels(labels, fontsize=9)
         ax.set_title("動画別30日間再生増加 TOP15", fontsize=13, pad=10)

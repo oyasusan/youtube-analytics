@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from youtube_analytics.collector import (
     classify_content_type,
     classify_video_type,

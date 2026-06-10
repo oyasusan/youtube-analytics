@@ -154,9 +154,9 @@ class StatisticalAnalyzer:
             current_likes: int = latest["like_count"]
             current_comments: int = latest["comment_count"]
 
-            def delta_h(h: int) -> int:
-                snap = self.db.get_video_snapshot_at(video_id, now - timedelta(hours=h))
-                return max(0, current_views - snap["view_count"]) if snap else 0
+            def delta_h(h: int, _vid: str = video_id, _views: int = current_views) -> int:
+                snap = self.db.get_video_snapshot_at(_vid, now - timedelta(hours=h))
+                return max(0, _views - snap["view_count"]) if snap else 0
 
             d1h = delta_h(1)
             d24h = delta_h(24)

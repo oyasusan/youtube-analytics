@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
+import pytest
+
 from youtube_analytics.analyzer import StatisticalAnalyzer
 from youtube_analytics.database import DatabaseManager
-from youtube_analytics.models import Video, VideoSnapshot
+from youtube_analytics.models import ChannelSnapshot, Video, VideoSnapshot
 
 
 def make_video(

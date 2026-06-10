@@ -12,10 +12,8 @@ from pathlib import Path
 # Allow running as script without package installation
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-import logging
-
-from youtube_analytics.config import get_config
 from youtube_analytics.collector import YouTubeCollector
+from youtube_analytics.config import get_config
 from youtube_analytics.database import DatabaseManager
 from youtube_analytics.logging_config import setup_logging
 
@@ -38,7 +36,7 @@ def main() -> int:
     size_mb = db.get_db_size_mb()
     logger.info("DB size: %.1f MB", size_mb)
     if size_mb >= config.db_size_warn_mb:
-        logger.warning("DB size (%.1f MB) approaching limit (%d MB)", size_mb, config.db_size_archive_mb)
+        logger.warning("DB size (%.1f MB) approaching limit (%d MB)", size_mb, config.db_size_archive_mb)  # noqa: E501
     if size_mb >= config.db_size_archive_mb:
         logger.warning("DB size exceeded archive threshold; run scripts/maintenance.py")
 

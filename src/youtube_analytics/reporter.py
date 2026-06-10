@@ -7,8 +7,6 @@ import shutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-_JST = timezone(timedelta(hours=9))
-
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .config import Config
@@ -16,6 +14,8 @@ from .database import DatabaseManager
 from .models import ReportData
 
 logger = logging.getLogger(__name__)
+
+_JST = timezone(timedelta(hours=9))
 
 
 def _utc_str_to_jst(utc_str: str) -> str:
