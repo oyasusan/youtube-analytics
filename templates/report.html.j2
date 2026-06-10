@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ data.channel_metrics.channel_name }} チャンネル分析 {{ data.report_date }}</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
   body { background: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
   .header-band { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 2.5rem 0 2rem; }
@@ -269,9 +270,11 @@
     <h4 class="mb-3">🤖 AI分析レポート</h4>
     {% if data.ai_analysis %}
     <div class="ai-section p-3">
-      <div id="ai-content" class="markdown-body">
-        {{ data.ai_analysis | replace('\n', '<br>') }}
-      </div>
+      <div id="ai-content" class="markdown-body"></div>
+      <script>
+        document.getElementById('ai-content').innerHTML =
+          marked.parse({{ data.ai_analysis | tojson }});
+      </script>
     </div>
     {% else %}
     <div class="alert alert-info mb-0">
@@ -284,7 +287,7 @@
 
 <footer class="footer text-center">
   <div class="container">
-    <small>Generated {{ generated_at }} UTC &nbsp;|&nbsp; {{ data.channel_metrics.channel_name }} Analytics System</small>
+    <small>Generated {{ generated_at }} &nbsp;|&nbsp; {{ data.channel_metrics.channel_name }} Analytics System</small>
   </div>
 </footer>
 </body>
