@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="3600">
+<title>{{ channel_name }} - ライブダッシュボード</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<style>
+  body { background: #0d1117; color: #e6edf3; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .hero { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); padding: 2.5rem 0 2rem; }
+  .kpi-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.25rem; }
+  .kpi-value { font-size: 2rem; font-weight: 700; color: #58a6ff; }
+  .kpi-label { color: #8b949e; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
+  .kpi-delta-pos { color: #3fb950; }
+  .kpi-delta-neg { color: #f85149; }
+  .kpi-delta-zero { color: #8b949e; }
+  .section { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .badge-shorts { background: #ff4b5c22; color: #ff4b5c; border: 1px solid #ff4b5c44; }
+  .badge-regular { background: #4c9be822; color: #4c9be8; border: 1px solid #4c9be844; }
+  table { color: #e6edf3; }
+  .table-dark-custom thead th { background: #21262d; border-color: #30363d; }
+  .table-dark-custom tbody tr:hover td { background: #1f262f; }
+  .table-dark-custom td, .table-dark-custom th { border-color: #30363d; }
+  a { color: #58a6ff; }
+  h2, h3, h4, h5 { color: #f0f6fc; }
+  .live-badge { background: #3fb95022; color: #3fb950; border: 1px solid #3fb95055; border-radius: 6px; padding: 2px 10px; font-size: .8rem; }
+  .nav-link-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: .4rem 1rem; color: #58a6ff; text-decoration: none; font-size: .9rem; }
+  .nav-link-btn:hover { background: #2d333b; color: #79c0ff; }
+</style>
+</head>
+<body>
+
+<div class="hero text-white">
+  <div class="container">
+    <div class="row align-items-center mb-3">
+      <div class="col">
+        <div class="d-flex align-items-center gap-3 mb-1">
+          <h1 class="fw-bold mb-0">⚡ {{ channel_name }}</h1>
+          <span class="live-badge">LIVE</span>
+        </div>
+        <p class="opacity-75 mb-0">ライブダッシュボード &nbsp;|&nbsp; 最終更新: {{ generated_at }}</p>
+      </div>
+      <div class="col-auto">
+        <a href="index.html" class="nav-link-btn">📊 日次レポートへ →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- KPI Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">登録者数</div>
+        <div class="kpi-value">{{ latest_ch["subscriber_count"] | format_int }}</div>
+        <div class="{% if delta_subs_1h > 0 %}kpi-delta-pos{% elif delta_subs_1h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small">
+          {{ delta_subs_1h | fmt_delta }} (1h)
+        </div>
+        <div class="{% if delta_subs_24h > 0 %}kpi-delta-pos{% elif delta_subs_24h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small opacity-75">
+          {{ delta_subs_24h | fmt_delta }} (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">総再生数</div>
+        <div class="kpi-value">{{ latest_ch["view_count"] | format_int }}</div>
+        <div class="{% if delta_views_1h > 0 %}kpi-delta-pos{% elif delta_views_1h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small">
+          {{ delta_views_1h | fmt_delta }} (1h)
+        </div>
+        <div class="{% if delta_views_24h > 0 %}kpi-delta-pos{% elif delta_views_24h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small opacity-75">
+          {{ delta_views_24h | fmt_delta }} (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">動画本数</div>
+        <div class="kpi-value">{{ latest_ch["video_count"] }}</div>
+        <div class="text-muted small">チャンネル総数</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="kpi-card">
+        <div class="kpi-label">更新間隔</div>
+        <div class="kpi-value" style="font-size:1.5rem;">毎時</div>
+        <div class="text-muted small">自動リロード: 1h</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rising Videos -->
+  <div class="section mb-4">
+    <h4 class="mb-3">🚀 急上昇 TOP20（+1h 再生数順）</h4>
+    <div class="table-responsive">
+      <table class="table table-sm table-dark-custom align-middle mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>タイトル</th>
+            <th class="text-end">現在</th>
+            <th class="text-end kpi-delta-pos">+1h</th>
+            <th class="text-end" style="color:#8b949e;">+3h</th>
+            <th class="text-end" style="color:#8b949e;">+24h</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in top_rising %}
+          <tr>
+            <td class="text-muted">{{ loop.index }}</td>
+            <td>
+              <a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank">
+                {{ v.title[:40] }}{% if v.title | length > 40 %}…{% endif %}
+              </a>
+              <br>
+              <span class="badge {% if v.video_type == 'shorts' %}badge-shorts{% else %}badge-regular{% endif %} small">{{ v.video_type }}</span>
+            </td>
+            <td class="text-end">{{ v.view_count | format_int }}</td>
+            <td class="text-end {% if v.delta_1h > 0 %}kpi-delta-pos{% else %}kpi-delta-zero{% endif %}">
+              {{ v.delta_1h | fmt_delta }}
+            </td>
+            <td class="text-end text-muted">{{ v.delta_3h | fmt_delta }}</td>
+            <td class="text-end text-muted">{{ v.delta_24h | fmt_delta }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted">データなし（1h以上前のスナップショットが必要です）</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Top by Total Views -->
+  <div class="section mb-4">
+    <h4 class="mb-3">👑 累計再生数 TOP20</h4>
+    <div class="table-responsive">
+      <table class="table table-sm table-dark-custom align-middle mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>タイトル</th>
+            <th class="text-end">累計再生</th>
+            <th class="text-end kpi-delta-pos">+1h</th>
+            <th class="text-end" style="color:#8b949e;">+24h</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in top_by_views %}
+          <tr>
+            <td class="text-muted">{{ loop.index }}</td>
+            <td>
+              <a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank">
+                {{ v.title[:40] }}{% if v.title | length > 40 %}…{% endif %}
+              </a>
+              <br>
+              <span class="badge {% if v.video_type == 'shorts' %}badge-shorts{% else %}badge-regular{% endif %} small">{{ v.video_type }}</span>
+            </td>
+            <td class="text-end">{{ v.view_count | format_int }}</td>
+            <td class="text-end {% if v.delta_1h > 0 %}kpi-delta-pos{% else %}kpi-delta-zero{% endif %}">
+              {{ v.delta_1h | fmt_delta }}
+            </td>
+            <td class="text-end text-muted">{{ v.delta_24h | fmt_delta }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer class="text-center py-3" style="color:#8b949e; border-top: 1px solid #30363d;">
+  <small>{{ channel_name }} Live Dashboard &nbsp;|&nbsp; {{ generated_at }} &nbsp;|&nbsp; <a href="index.html">日次レポート</a></small>
+</footer>
+</body>
+</html>
