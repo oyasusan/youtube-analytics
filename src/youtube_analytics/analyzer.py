@@ -74,7 +74,7 @@ class StatisticalAnalyzer:
             days_span = max(1, (now - datetime.fromisoformat(first[0]["recorded_at"])).days)
             avg_daily = max(1, (latest["view_count"] - first[0]["view_count"]) / days_span)
 
-        return float(delta_24h) / avg_daily
+        return float(delta_24h) / float(avg_daily)
 
     # ── Buzz score ────────────────────────────────────────────────────────────
 
