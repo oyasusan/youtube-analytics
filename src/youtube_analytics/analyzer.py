@@ -432,9 +432,10 @@ class StatisticalAnalyzer:
         for dow in range(7):
             items = groups[dow]
             if not items:
-                result.append(
-                    DayOfWeekStats(day_of_week=dow, day_name=_DAY_NAMES[dow], video_count=0, avg_views=0.0, avg_growth_rate=0.0)
-                )
+                result.append(DayOfWeekStats(
+                    day_of_week=dow, day_name=_DAY_NAMES[dow],
+                    video_count=0, avg_views=0.0, avg_growth_rate=0.0,
+                ))
                 continue
             avg_views = sum(i.current_views for i in items) / len(items)
             avg_gr = sum(i.growth_rate_30d for i in items) / len(items)
