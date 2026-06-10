@@ -35,7 +35,7 @@
     <div class="row align-items-center mb-3">
       <div class="col">
         <h1 class="fw-bold mb-1">📊 {{ data.channel_metrics.channel_name }}</h1>
-        <p class="opacity-75 mb-0">YouTube Analytics Dashboard &nbsp;|&nbsp; 最終更新: {{ generated_at[:10] }}</p>
+        <p class="opacity-75 mb-0">YouTube Analytics Dashboard &nbsp;|&nbsp; 最終更新: {{ generated_at }}</p>
       </div>
     </div>
   </div>
@@ -154,7 +154,7 @@
 </div>
 
 <footer class="text-center py-3" style="color:#8b949e; border-top: 1px solid #30363d;">
-  <small>{{ data.channel_metrics.channel_name }} Analytics &nbsp;|&nbsp; Generated {{ generated_at }} UTC</small>
+  <small>{{ data.channel_metrics.channel_name }} Analytics &nbsp;|&nbsp; Generated {{ generated_at }}</small>
 </footer>
 </body>
 </html>
