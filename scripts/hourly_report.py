@@ -28,7 +28,7 @@ def _generate_live_comment(
     channel_name: str,
     subscribers: int,
     delta_views_1h: int,
-    top_rising: list["LiveVideoRow"],
+    top_rising: list[LiveVideoRow],
 ) -> str:
     """Call Groq/OpenAI-compatible API for a 2-3 line live comment. Returns '' on failure."""
     if not api_key:
