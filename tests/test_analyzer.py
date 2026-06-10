@@ -43,7 +43,7 @@ def add_snapshots(
 ) -> None:
     now = datetime.utcnow()
     db.insert_video_snapshot(
-        VideoSnapshot(video_id, now - timedelta(hours=24), views_24h_ago, likes_now // 2, comments_now // 2)
+        VideoSnapshot(video_id, now - timedelta(hours=24), views_24h_ago, likes_now, comments_now)
     )
     db.insert_video_snapshot(
         VideoSnapshot(video_id, now, views_now, likes_now, comments_now)

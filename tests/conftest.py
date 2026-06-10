@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -31,6 +32,8 @@ def tmp_db(tmp_path: Path) -> DatabaseManager:
 
 @pytest.fixture
 def test_config(tmp_path: Path) -> Config:
+    real_templates = Path(__file__).parent.parent / "templates"
+    shutil.copytree(str(real_templates), str(tmp_path / "templates"))
     return Config(
         project_root=tmp_path,
         youtube_api_key="test_api_key",
