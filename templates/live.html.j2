@@ -50,6 +50,19 @@
 
 <div class="container py-4">
 
+  <!-- AI Comment -->
+  {% if ai_comment %}
+  <div class="section mb-3" style="border-left: 3px solid #58a6ff; padding: 1rem 1.25rem;">
+    <div class="d-flex align-items-start gap-2">
+      <span style="font-size:1.1rem; margin-top:1px;">🤖</span>
+      <div>
+        <div class="text-muted small mb-1">AI コメント</div>
+        <div style="color:#e6edf3; line-height:1.7;">{{ ai_comment }}</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <!-- KPI Row -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">

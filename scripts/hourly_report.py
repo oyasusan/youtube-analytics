@@ -20,6 +20,47 @@ from youtube_analytics.config import get_config
 from youtube_analytics.database import DatabaseManager
 from youtube_analytics.logging_config import setup_logging
 
+
+def _generate_live_comment(
+    api_key: str,
+    base_url: str,
+    model: str,
+    channel_name: str,
+    subscribers: int,
+    delta_views_1h: int,
+    top_rising: list["LiveVideoRow"],
+) -> str:
+    """Call Groq/OpenAI-compatible API for a 2-3 line live comment. Returns '' on failure."""
+    if not api_key:
+        return ""
+    try:
+        from openai import OpenAI
+
+        top3 = "\n".join(
+            f"{i + 1}. 「{v.title[:30]}」 +{v.delta_1h:,}回"
+            for i, v in enumerate(top_rising[:3])
+            if v.delta_1h > 0
+        ) or "（目立った変化なし）"
+
+        prompt = (
+            f"チャンネル「{channel_name}」の直近1時間のデータ：\n"
+            f"登録者: {subscribers:,}人\n"
+            f"過去1時間の総再生増加: +{delta_views_1h:,}回\n\n"
+            f"急上昇動画（+1h）:\n{top3}\n\n"
+            f"この状況をチャンネル運営者向けに2〜3文で簡潔にコメントしてください。"
+            f"数字に基づいて具体的に。"
+        )
+        client = OpenAI(api_key=api_key, base_url=base_url)
+        resp = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=250,
+            temperature=0.7,
+        )
+        return (resp.choices[0].message.content or "").strip()
+    except Exception:
+        return ""
+
 _JST = timezone(timedelta(hours=9))
 
 
@@ -102,6 +143,18 @@ def main() -> int:
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:20]
     generated_at = datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST")
 
+    ai_comment = _generate_live_comment(
+        api_key=config.openai_api_key,
+        base_url=config.openai_base_url,
+        model=config.openai_model,
+        channel_name=channel_name,
+        subscribers=int(latest_ch["subscriber_count"]),
+        delta_views_1h=delta_views_1h,
+        top_rising=top_rising,
+    )
+    if ai_comment:
+        logger.info("Live AI comment generated (%d chars)", len(ai_comment))
+
     env = Environment(
         loader=FileSystemLoader(str(config.templates_dir)),
         autoescape=select_autoescape(["html"]),
@@ -120,6 +173,7 @@ def main() -> int:
         top_rising=top_rising,
         top_by_views=top_by_views,
         generated_at=generated_at,
+        ai_comment=ai_comment,
     )
 
     docs_dir = config.docs_dir

@@ -41,6 +41,9 @@ jobs:
         env:
           CHANNEL_ID: ${{ vars.CHANNEL_ID }}
           CHANNEL_NAME: ${{ vars.CHANNEL_NAME || '空想ロマンス' }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.openai.com/v1' }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
         run: uv run python scripts/hourly_report.py
 
       - name: Check DB size
