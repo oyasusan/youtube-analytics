@@ -120,6 +120,9 @@ class Reporter:
             report_date=date_str,
             file_path_md=str(md_path),
             file_path_html=str(html_path),
-            summary=f"登録者 {data.channel_metrics.current_subscribers:,} / 再生 {data.channel_metrics.current_views:,}",
+            summary=(
+                f"登録者 {data.channel_metrics.current_subscribers:,}"
+                f" / 再生 {data.channel_metrics.current_views:,}"
+            ),
         )
         return md_path, html_path

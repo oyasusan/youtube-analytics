@@ -73,7 +73,8 @@ def main() -> int:
             view_count=latest_ch["view_count"],
             video_count=latest_ch["video_count"],
             subscriber_delta=(
-                latest_ch["subscriber_count"] - (prev_ch["subscriber_count"] if prev_ch else latest_ch["subscriber_count"])
+                latest_ch["subscriber_count"]
+                - (prev_ch["subscriber_count"] if prev_ch else latest_ch["subscriber_count"])
             ),
             view_delta=(
                 latest_ch["view_count"] - (prev_ch["view_count"] if prev_ch else latest_ch["view_count"])
