@@ -55,6 +55,11 @@ def main() -> int:
     # ── Compute daily channel summary ─────────────────────────────────────────
     latest_ch = db.get_latest_channel_snapshot(channel_id)
     prev_ch = db.get_channel_snapshot_at(channel_id, datetime.utcnow() - timedelta(hours=24))
+    if not prev_ch and latest_ch:
+        # Fallback: compare against the snapshot immediately before the latest one.
+        # This covers the case where no hourly data exists (daily-only collection).
+        latest_ch_dt = datetime.fromisoformat(str(latest_ch["recorded_at"]))
+        prev_ch = db.get_channel_snapshot_at(channel_id, latest_ch_dt - timedelta(seconds=1))
     all_videos = db.get_all_videos(channel_id)
     shorts_count = sum(1 for v in all_videos if v["video_type"] == "shorts")
     regular_count = sum(1 for v in all_videos if v["video_type"] == "regular")
@@ -95,10 +100,17 @@ def main() -> int:
         vid = row["video_id"]
         published_at = datetime.fromisoformat(row["published_at"])
 
-        snap_start = db.get_video_snapshot_at(vid, day_start)
         snap_end = db.get_video_snapshot_at(vid, now)
+        if not snap_end:
+            continue
 
-        if not snap_start or not snap_end:
+        snap_start = db.get_video_snapshot_at(vid, day_start)
+        if not snap_start:
+            # Fallback: compare against the snapshot immediately before today's collection.
+            # Covers daily-only collection where no pre-midnight snapshot exists.
+            end_dt = datetime.fromisoformat(str(snap_end["recorded_at"]))
+            snap_start = db.get_video_snapshot_at(vid, end_dt - timedelta(seconds=1))
+        if not snap_start or snap_start["id"] == snap_end["id"]:
             continue
 
         summary = DailyVideoSummary(

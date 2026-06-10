@@ -154,9 +154,25 @@ class StatisticalAnalyzer:
             current_likes: int = latest["like_count"]
             current_comments: int = latest["comment_count"]
 
-            def delta_h(h: int, _vid: str = video_id, _views: int = current_views) -> int:
+            # Pre-fetch view count from the snapshot immediately before the latest as a fallback.
+            # When no snapshot exists at the requested time window (e.g., first few days of
+            # data collection), we compare against the previous known state instead of returning 0.
+            latest_dt = datetime.fromisoformat(str(latest["recorded_at"]))
+            prev_snap = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(seconds=1))
+            prev_views: Optional[int] = int(prev_snap["view_count"]) if prev_snap else None
+
+            def delta_h(
+                h: int,
+                _vid: str = video_id,
+                _views: int = current_views,
+                _fallback: Optional[int] = prev_views,
+            ) -> int:
                 snap = self.db.get_video_snapshot_at(_vid, now - timedelta(hours=h))
-                return max(0, _views - snap["view_count"]) if snap else 0
+                if snap:
+                    return max(0, _views - int(snap["view_count"]))
+                if _fallback is not None:
+                    return max(0, _views - _fallback)
+                return 0
 
             d1h = delta_h(1)
             d24h = delta_h(24)
