@@ -132,7 +132,7 @@
 ## 📈 グラフ
 
 {% for name, path in data.graph_paths.items() %}
-![{{ name }}](../{{ path }})
+![{{ name }}](graphs/{{ path | basename }})
 
 {% endfor %}
 
