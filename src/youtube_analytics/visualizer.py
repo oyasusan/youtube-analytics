@@ -70,13 +70,13 @@ class Visualizer:
 
     def channel_growth_rate(self, channel_id: str, days: int = 30) -> Optional[str]:
         """Hourly view delta for today (JST 0:00–23:00), replacing the old 30-day bar chart."""
-        _JST_OFFSET = timedelta(hours=9)
+        jst_offset = timedelta(hours=9)
         now_utc = datetime.utcnow()
-        now_jst = now_utc + _JST_OFFSET
+        now_jst = now_utc + jst_offset
 
         # JST midnight → UTC
         jst_midnight = now_jst.replace(hour=0, minute=0, second=0, microsecond=0)
-        utc_midnight = jst_midnight - _JST_OFFSET
+        utc_midnight = jst_midnight - jst_offset
 
         hours: list[int] = []
         deltas: list[Optional[int]] = []
