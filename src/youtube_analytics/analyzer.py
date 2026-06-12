@@ -38,11 +38,12 @@ class StatisticalAnalyzer:
         self, video_id: str, hours_ago: int, reference_time: Optional[datetime] = None
     ) -> int:
         """Return view count increase over the last `hours_ago` hours."""
-        now = reference_time or datetime.utcnow()
-        then = now - timedelta(hours=hours_ago)
-        latest = self.db.get_video_snapshot_at(video_id, now)
-        old = self.db.get_video_snapshot_at(video_id, then)
-        if not latest or not old:
+        latest = self.db.get_latest_video_snapshot(video_id)
+        if not latest:
+            return 0
+        latest_dt = reference_time or datetime.fromisoformat(str(latest["recorded_at"]))
+        old = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(hours=hours_ago))
+        if not old or old["id"] == latest["id"]:
             return 0
         return int(max(0, latest["view_count"] - old["view_count"]))
 
@@ -56,22 +57,24 @@ class StatisticalAnalyzer:
 
     def momentum_index(self, video_id: str) -> float:
         """24h view increase / 30-day average daily view increase."""
-        now = datetime.utcnow()
-        latest = self.db.get_video_snapshot_at(video_id, now)
-        ago_24h = self.db.get_video_snapshot_at(video_id, now - timedelta(hours=24))
-        ago_30d = self.db.get_video_snapshot_at(video_id, now - timedelta(days=30))
+        latest = self.db.get_latest_video_snapshot(video_id)
+        if not latest:
+            return 0.0
+        latest_dt = datetime.fromisoformat(str(latest["recorded_at"]))
+        ago_24h = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(hours=24))
+        ago_30d = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(days=30))
 
-        if not latest or not ago_24h:
+        if not ago_24h or ago_24h["id"] == latest["id"]:
             return 0.0
         delta_24h = max(0, latest["view_count"] - ago_24h["view_count"])
 
-        if ago_30d:
+        if ago_30d and ago_30d["id"] != latest["id"]:
             avg_daily = max(1, (latest["view_count"] - ago_30d["view_count"]) / 30)
         else:
-            first = self.db.get_video_snapshots(video_id, now - timedelta(days=365), now)
+            first = self.db.get_video_snapshots(video_id, latest_dt - timedelta(days=365), latest_dt)
             if len(first) < 2:
                 return 0.0
-            days_span = max(1, (now - datetime.fromisoformat(first[0]["recorded_at"])).days)
+            days_span = max(1, (latest_dt - datetime.fromisoformat(first[0]["recorded_at"])).days)
             avg_daily = max(1, (latest["view_count"] - first[0]["view_count"]) / days_span)
 
         return float(delta_24h) / float(avg_daily)
@@ -80,10 +83,12 @@ class StatisticalAnalyzer:
 
     def buzz_score(self, video_id: str) -> float:
         """Weighted 0-100 score combining view/like/comment 24h growth rates."""
-        now = datetime.utcnow()
-        latest = self.db.get_video_snapshot_at(video_id, now)
-        old = self.db.get_video_snapshot_at(video_id, now - timedelta(hours=24))
-        if not latest or not old:
+        latest = self.db.get_latest_video_snapshot(video_id)
+        if not latest:
+            return 0.0
+        latest_dt = datetime.fromisoformat(str(latest["recorded_at"]))
+        old = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(hours=24))
+        if not old or old["id"] == latest["id"]:
             return 0.0
 
         view_rate = self._safe_rate(latest["view_count"], old["view_count"])
@@ -99,7 +104,7 @@ class StatisticalAnalyzer:
     def compute_video_scores(self, video_id: str, published_at: datetime) -> VideoScore:
         now = datetime.utcnow()
         age_days = max(1, (now - published_at).days)
-        latest = self.db.get_video_snapshot_at(video_id, now)
+        latest = self.db.get_latest_video_snapshot(video_id)
 
         if not latest:
             return VideoScore(video_id=video_id, scored_at=now)
@@ -146,32 +151,26 @@ class StatisticalAnalyzer:
             video_id: str = row["video_id"]
             published_at = datetime.fromisoformat(row["published_at"])
 
-            latest = self.db.get_video_snapshot_at(video_id, now)
+            latest = self.db.get_latest_video_snapshot(video_id)
             if not latest:
                 continue
 
             current_views: int = latest["view_count"]
             current_likes: int = latest["like_count"]
             current_comments: int = latest["comment_count"]
-
-            # Pre-fetch view count from the snapshot immediately before the latest as a fallback.
-            # When no snapshot exists at the requested time window (e.g., first few days of
-            # data collection), we compare against the previous known state instead of returning 0.
             latest_dt = datetime.fromisoformat(str(latest["recorded_at"]))
-            prev_snap = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(seconds=1))
-            prev_views: Optional[int] = int(prev_snap["view_count"]) if prev_snap else None
+            latest_id: int = latest["id"]
 
             def delta_h(
                 h: int,
                 _vid: str = video_id,
                 _views: int = current_views,
-                _fallback: Optional[int] = prev_views,
+                _lid: int = latest_id,
+                _ldt: datetime = latest_dt,
             ) -> int:
-                snap = self.db.get_video_snapshot_at(_vid, now - timedelta(hours=h))
-                if snap:
+                snap = self.db.get_video_snapshot_at(_vid, _ldt - timedelta(hours=h))
+                if snap and int(snap["id"]) != _lid:
                     return max(0, _views - int(snap["view_count"]))
-                if _fallback is not None:
-                    return max(0, _views - _fallback)
                 return 0
 
             d1h = delta_h(1)
@@ -179,9 +178,9 @@ class StatisticalAnalyzer:
             d7d = delta_h(7 * 24)
             d30d = delta_h(30 * 24)
 
-            snap_24h = self.db.get_video_snapshot_at(video_id, now - timedelta(hours=24))
-            snap_7d = self.db.get_video_snapshot_at(video_id, now - timedelta(days=7))
-            snap_30d = self.db.get_video_snapshot_at(video_id, now - timedelta(days=30))
+            snap_24h = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(hours=24))
+            snap_7d = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(days=7))
+            snap_30d = self.db.get_video_snapshot_at(video_id, latest_dt - timedelta(days=30))
 
             gr_24h = self._safe_rate(current_views, snap_24h["view_count"]) if snap_24h else 0.0
             gr_7d = self._safe_rate(current_views, snap_7d["view_count"]) if snap_7d else 0.0
@@ -195,7 +194,7 @@ class StatisticalAnalyzer:
             is_longtail = age_days >= 30 and d7d > 0
 
             hit_score = self._hit_prediction_score(
-                video_id, published_at, current_views, current_likes, current_comments, d24h
+                video_id, published_at, current_views, current_likes, current_comments, d24h, latest_dt
             )
 
             results.append(
@@ -235,19 +234,20 @@ class StatisticalAnalyzer:
         likes: int,
         comments: int,
         delta_24h: int,
+        latest_dt: Optional[datetime] = None,
     ) -> float:
         """Rule-based score 0-100 predicting growth in next 7 days."""
-        now = datetime.utcnow()
-        age_days = (now - published_at).days
+        ref = latest_dt or datetime.utcnow()
+        age_days = (ref - published_at).days
         if age_days > 30:
             return 0.0
 
         score = 0.0
 
         # Rule 1: accelerating growth (last 24h > previous 24h)
-        snap_48h = self.db.get_video_snapshot_at(video_id, now - timedelta(hours=48))
-        snap_24h = self.db.get_video_snapshot_at(video_id, now - timedelta(hours=24))
-        if snap_48h and snap_24h:
+        snap_48h = self.db.get_video_snapshot_at(video_id, ref - timedelta(hours=48))
+        snap_24h = self.db.get_video_snapshot_at(video_id, ref - timedelta(hours=24))
+        if snap_48h and snap_24h and snap_48h["id"] != snap_24h["id"]:
             prev_delta = snap_24h["view_count"] - snap_48h["view_count"]
             if prev_delta > 0 and delta_24h > prev_delta:
                 score += 30.0 * min(2.0, delta_24h / max(1, prev_delta))

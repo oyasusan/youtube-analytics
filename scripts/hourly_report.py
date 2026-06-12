@@ -112,15 +112,16 @@ def main() -> int:
     rows: list[LiveVideoRow] = []
     for v in all_videos:
         vid: str = v["video_id"]
-        snap_now = db.get_video_snapshot_at(vid, now)
-        if not snap_now:
+        snap_latest = db.get_latest_video_snapshot(vid)
+        if not snap_latest:
             continue
-        cur_views = int(snap_now["view_count"])
-        snap_now_id: int = snap_now["id"]
+        cur_views = int(snap_latest["view_count"])
+        snap_latest_id: int = snap_latest["id"]
+        latest_dt = datetime.fromisoformat(str(snap_latest["recorded_at"]))
 
-        def _delta(hours: int, _vid: str = vid, _cur: int = cur_views, _sid: int = snap_now_id) -> int:
-            s = db.get_video_snapshot_at(_vid, now - timedelta(hours=hours))
-            if s and int(s["id"]) != _sid:
+        def _delta(hours: int, _vid: str = vid, _cur: int = cur_views, _lid: int = snap_latest_id, _ldt: datetime = latest_dt) -> int:
+            s = db.get_video_snapshot_at(_vid, _ldt - timedelta(hours=hours))
+            if s and int(s["id"]) != _lid:
                 return max(0, _cur - int(s["view_count"]))
             return 0
 
