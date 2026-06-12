@@ -6,6 +6,7 @@ Computes daily summaries, scores, AI analysis, charts, and reports.
 
 from __future__ import annotations
 
+import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -138,6 +139,37 @@ def main() -> int:
 
     # ── Compile full report data ───────────────────────────────────────────────
     report_data = analyzer.compile_report_data(channel_id, channel_name)
+
+    # ── Hourly chart data (00:00–24:00 JST) ──────────────────────────────────
+    now_utc = datetime.utcnow()
+    now_jst = now_utc + timedelta(hours=9)
+    midnight_jst = now_jst.replace(hour=0, minute=0, second=0, microsecond=0)
+    midnight_utc = midnight_jst - timedelta(hours=9)
+
+    chart_labels: list[str] = []
+    chart_deltas: list[int | None] = []
+    for h in range(1, 25):
+        t_end_utc = midnight_utc + timedelta(hours=h)
+        t_start_utc = t_end_utc - timedelta(hours=1)
+        t_end_jst = midnight_jst + timedelta(hours=h)
+        chart_labels.append("24:00" if h == 24 else t_end_jst.strftime("%H:%M"))
+        if t_end_utc <= now_utc:
+            bucket_delta = 0
+            has_data = False
+            for v in all_videos:
+                snap_e = db.get_video_snapshot_at(v["video_id"], t_end_utc)
+                if snap_e:
+                    has_data = True
+                    snap_s = db.get_video_snapshot_at(v["video_id"], t_start_utc)
+                    if snap_s and int(snap_e["id"]) != int(snap_s["id"]):
+                        bucket_delta += max(0, int(snap_e["view_count"]) - int(snap_s["view_count"]))
+            chart_deltas.append(bucket_delta if has_data else None)
+        else:
+            chart_deltas.append(None)
+
+    report_data.hourly_chart_labels_json = json.dumps(chart_labels, ensure_ascii=False)
+    report_data.hourly_chart_deltas_json = json.dumps(chart_deltas)
+    logger.info("Hourly chart data computed (%d buckets)", len(chart_labels))
 
     # ── Generate visualizations ───────────────────────────────────────────────
     viz = Visualizer(db, config.graphs_dir)
