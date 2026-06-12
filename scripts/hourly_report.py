@@ -141,7 +141,7 @@ def main() -> int:
     delta_views_24h = sum(r.delta_24h for r in rows)
 
     top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:10]
-    top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:20]
+    top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:10]
     generated_at = datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST")
 
     # ±12h line chart data (centered on current time)
