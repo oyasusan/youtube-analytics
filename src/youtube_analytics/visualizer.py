@@ -127,7 +127,7 @@ class Visualizer:
     # ── Video growth comparison (top N) ───────────────────────────────────────
 
     def video_growth_comparison(
-        self, metrics: list[GrowthMetrics], top_n: int = 15
+        self, metrics: list[GrowthMetrics], top_n: int = 10
     ) -> Optional[str]:
         top = sorted(metrics, key=lambda m: m.delta_30d, reverse=True)[:top_n]
         if not top:
@@ -141,8 +141,8 @@ class Visualizer:
         ax.barh(range(len(labels)), values, color=colors)
         ax.set_yticks(range(len(labels)))
         ax.set_yticklabels(labels, fontsize=9)
-        ax.set_title("動画別30日間再生増加 TOP15", fontsize=13, pad=10)
-        ax.set_xlabel("30日再生増加数")
+        ax.set_title("動画別30日間再生増加 TOP10", fontsize=13, pad=10)
+        ax.set_xlabel("30日間再生増加数（回）")
         ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
 
         # Legend

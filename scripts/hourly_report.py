@@ -7,6 +7,7 @@ Writes docs/live.html with per-hour deltas for fast feedback.
 
 from __future__ import annotations
 
+import json
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -139,9 +140,29 @@ def main() -> int:
     delta_views_1h = sum(r.delta_1h for r in rows)
     delta_views_24h = sum(r.delta_24h for r in rows)
 
-    top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:20]
+    top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:10]
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:20]
     generated_at = datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST")
+
+    # ±12h line chart data (centered on current time)
+    chart_labels: list[str] = []
+    chart_deltas: list[int | None] = []
+    for h in range(-12, 13):
+        t_utc = now + timedelta(hours=h)
+        t_jst_str = (t_utc + timedelta(hours=9)).strftime("%H:%M")
+        label = f"現在({t_jst_str})" if h == 0 else f"{h:+d}h\n({t_jst_str})"
+        chart_labels.append(label)
+        if h <= 0:
+            snap_end = db.get_channel_snapshot_at(channel_id, t_utc)
+            snap_start = db.get_channel_snapshot_at(channel_id, t_utc - timedelta(hours=1))
+            if snap_end and snap_start:
+                chart_deltas.append(max(0, int(snap_end["view_count"]) - int(snap_start["view_count"])))
+            else:
+                chart_deltas.append(None)
+        else:
+            chart_deltas.append(None)
+    chart_labels_json = json.dumps(chart_labels, ensure_ascii=False)
+    chart_deltas_json = json.dumps(chart_deltas)
 
     ai_comment = _generate_live_comment(
         api_key=config.openai_api_key,
@@ -174,6 +195,8 @@ def main() -> int:
         top_by_views=top_by_views,
         generated_at=generated_at,
         ai_comment=ai_comment,
+        chart_labels_json=chart_labels_json,
+        chart_deltas_json=chart_deltas_json,
     )
 
     docs_dir = config.docs_dir
