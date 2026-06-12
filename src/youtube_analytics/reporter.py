@@ -97,7 +97,7 @@ class Reporter:
             shutil.copy2(str(src), str(graphs_in_docs / src.name))
 
         # Generate index page
-        recent_reports = self.db.get_recent_reports(30)
+        recent_reports = self.db.get_recent_reports(20)
 
         # Fall back to DB if current run has no AI analysis (e.g. local regen without credentials)
         if not data.ai_analysis:

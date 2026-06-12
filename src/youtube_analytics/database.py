@@ -547,12 +547,17 @@ class DatabaseManager:
                 (report_type, report_date, file_path_md, file_path_html, summary),
             )
 
-    def get_recent_reports(self, limit: int = 30) -> list[sqlite3.Row]:
+    def get_recent_reports(self, limit: int = 20) -> list[sqlite3.Row]:
         with self.connect() as conn:
             return conn.execute(
                 """
                 SELECT * FROM report_history
-                ORDER BY generated_at DESC LIMIT ?
+                WHERE id IN (
+                    SELECT MAX(id) FROM report_history
+                    WHERE report_type = 'daily'
+                    GROUP BY report_date
+                )
+                ORDER BY report_date DESC LIMIT ?
                 """,
                 (limit,),
             ).fetchall()
