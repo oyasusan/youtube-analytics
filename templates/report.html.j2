@@ -92,18 +92,19 @@
       var labels = {{ data.hourly_chart_labels_json | safe }};
       var deltas = {{ data.hourly_chart_deltas_json | safe }};
       new Chart(document.getElementById('hourlyViewsChart'), {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: labels,
           datasets: [{
             label: '再生数増加（回/時）',
             data: deltas,
-            borderColor: '#4c9be8',
-            backgroundColor: 'rgba(76,155,232,0.10)',
-            pointBackgroundColor: '#4c9be8',
-            pointRadius: 3,
-            tension: 0.3,
-            spanGaps: false,
+            backgroundColor: deltas.map(function(v) {
+              return v === null ? 'rgba(200,200,200,0.3)' : 'rgba(76,155,232,0.75)';
+            }),
+            borderColor: deltas.map(function(v) {
+              return v === null ? 'rgba(200,200,200,0.5)' : '#4c9be8';
+            }),
+            borderWidth: 1,
           }]
         },
         options: {
@@ -122,6 +123,7 @@
           scales: {
             x: { ticks: { maxRotation: 45 } },
             y: {
+              min: 0,
               ticks: { callback: function(v) { return v.toLocaleString() + ' 回'; } },
               title: { display: true, text: '再生数増加（回/時）' }
             }

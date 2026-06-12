@@ -61,6 +61,11 @@ class Visualizer:
         ax.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days // 10)))
         fig.autofmt_xdate()
         ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
+        # Y軸をデータ範囲に合わせてズームイン（変化が見やすいよう余白10%）
+        min_v, max_v = min(views), max(views)
+        span = max_v - min_v
+        margin = span * 0.1 if span > 0 else max_v * 0.01
+        ax.set_ylim(min_v - margin, max_v + margin)
         ax.grid(axis="y", alpha=0.3)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
@@ -307,7 +312,6 @@ class Visualizer:
 
         charts = [
             ("channel_views_trend", lambda: self.channel_views_trend(channel_id)),
-            ("channel_growth_rate", lambda: self.channel_growth_rate(channel_id)),
             ("posting_frequency", lambda: self.posting_frequency(channel_id)),
             ("video_growth_comparison", lambda: self.video_growth_comparison(metrics)),
             ("shorts_ratio_trend", lambda: self.shorts_ratio_trend(channel_id)),
