@@ -145,12 +145,13 @@ def main() -> int:
     generated_at = datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST")
 
     # ±12h line chart data (centered on current time)
-    chart_labels: list[str] = []
+    # Labels are arrays so Chart.js renders them on two lines
+    chart_labels: list[list[str] | str] = []
     chart_deltas: list[int | None] = []
     for h in range(-12, 13):
         t_utc = now + timedelta(hours=h)
         t_jst_str = (t_utc + timedelta(hours=9)).strftime("%H:%M")
-        label = f"現在({t_jst_str})" if h == 0 else f"{h:+d}h\n({t_jst_str})"
+        label: list[str] | str = f"現在 {t_jst_str}" if h == 0 else [f"{h:+d}h", t_jst_str]
         chart_labels.append(label)
         if h <= 0:
             snap_end = db.get_channel_snapshot_at(channel_id, t_utc)
