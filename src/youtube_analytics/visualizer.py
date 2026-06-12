@@ -58,7 +58,8 @@ class Visualizer:
         ax.set_xlabel("日付")
         ax.set_ylabel("総再生数")
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d"))
-        ax.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days // 10)))
+        date_range = max(1, (dates[-1] - dates[0]).days)
+        ax.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, date_range // 6)))
         fig.autofmt_xdate()
         ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
         # Y軸をデータ範囲に合わせてズームイン（変化が見やすいよう余白10%）

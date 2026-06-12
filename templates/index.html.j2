@@ -89,7 +89,7 @@
   <!-- Hourly Views Chart -->
   {% if data.hourly_chart_labels_json %}
   <div class="section mb-4">
-    <h4 class="mb-3">📈 今日の時間別再生数増加</h4>
+    <h4 class="mb-3">📈 {{ data.report_date }} 時間別再生数増加</h4>
     <canvas id="hourlyViewsChart" height="80"></canvas>
     <script>
     (function(){
