@@ -6,6 +6,7 @@
 <title>{{ data.channel_metrics.channel_name }} - YouTube Analytics Dashboard</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   body { background: #0d1117; color: #e6edf3; font-family: 'Segoe UI', system-ui, sans-serif; }
   .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 3rem 0 2.5rem; }
@@ -84,6 +85,63 @@
       </div>
     </div>
   </div>
+
+  <!-- Hourly Views Chart -->
+  {% if data.hourly_chart_labels_json %}
+  <div class="section mb-4">
+    <h4 class="mb-3">📈 今日の時間別再生数増加</h4>
+    <canvas id="hourlyViewsChart" height="80"></canvas>
+    <script>
+    (function(){
+      var labels = {{ data.hourly_chart_labels_json | safe }};
+      var deltas = {{ data.hourly_chart_deltas_json | safe }};
+      new Chart(document.getElementById('hourlyViewsChart'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '再生数増加（回/時）',
+            data: deltas,
+            backgroundColor: deltas.map(function(v) {
+              return v === null ? 'rgba(200,200,200,0.1)' : 'rgba(88,166,255,0.7)';
+            }),
+            borderColor: deltas.map(function(v) {
+              return v === null ? 'rgba(200,200,200,0.2)' : '#58a6ff';
+            }),
+            borderWidth: 1,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#e6edf3' } },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  var v = ctx.raw;
+                  return v === null ? 'データなし' : '+' + v.toLocaleString() + ' 回';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#8b949e', maxRotation: 45 },
+              grid: { color: '#30363d' }
+            },
+            y: {
+              min: 0,
+              ticks: { color: '#8b949e', callback: function(v) { return v.toLocaleString() + ' 回'; } },
+              grid: { color: '#30363d' },
+              title: { display: true, text: '再生数増加（回/時）', color: '#8b949e' }
+            }
+          }
+        }
+      });
+    })();
+    </script>
+  </div>
+  {% endif %}
 
   <!-- Graphs -->
   {% if data.graph_paths %}
