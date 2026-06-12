@@ -136,9 +136,9 @@ def main() -> int:
             )
         )
 
-    # View deltas: sum across all videos (more responsive than channel-level API cache)
-    delta_views_1h = sum(r.delta_1h for r in rows)
-    delta_views_24h = sum(r.delta_24h for r in rows)
+    # View deltas: channel-level snapshots (consistent with daily report)
+    delta_views_1h = ch_delta("view_count", prev_ch_1h)
+    delta_views_24h = ch_delta("view_count", prev_ch_24h)
 
     top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:10]
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:10]
