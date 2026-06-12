@@ -106,15 +106,15 @@
     </div>
   </div>
 
-  <!-- Views Delta Line Chart (±12h) -->
+  <!-- Views Delta Line Chart (today) -->
   <div class="section mb-4">
-    <h4 class="mb-3">📊 再生数の増減（現在時刻 ±12時間）</h4>
+    <h4 class="mb-3">📈 今日の再生数の増加トレンド</h4>
     <canvas id="viewsDeltaChart" height="80"></canvas>
     <script>
     (function(){
       var labels = {{ chart_labels_json | safe }};
       var deltas = {{ chart_deltas_json | safe }};
-      var nowIdx = 12; // index 12 = 0h (current)
+      var nowIdx = {{ chart_now_idx }};
       var pointColors = labels.map(function(_, i) {
         return i === nowIdx ? '#f0883e' : '#58a6ff';
       });

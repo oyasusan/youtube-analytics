@@ -144,24 +144,30 @@ def main() -> int:
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:10]
     generated_at = datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST")
 
-    # ±12h line chart data (centered on current time)
-    # Labels are arrays so Chart.js renders them on two lines
-    chart_labels: list[list[str] | str] = []
+    # Today's hourly view increase (00:00 JST → 23:00 JST)
+    now_jst = now + timedelta(hours=9)
+    midnight_jst = now_jst.replace(hour=0, minute=0, second=0, microsecond=0)
+    midnight_utc = midnight_jst - timedelta(hours=9)
+
+    chart_labels: list[str] = []
     chart_deltas: list[int | None] = []
-    for h in range(-12, 13):
-        t_utc = now + timedelta(hours=h)
-        t_jst_str = (t_utc + timedelta(hours=9)).strftime("%H:%M")
-        label: list[str] | str = f"現在 {t_jst_str}" if h == 0 else [f"{h:+d}h", t_jst_str]
-        chart_labels.append(label)
-        if h <= 0:
-            snap_end = db.get_channel_snapshot_at(channel_id, t_utc)
-            snap_start = db.get_channel_snapshot_at(channel_id, t_utc - timedelta(hours=1))
+    chart_now_idx = 0
+
+    for h in range(1, 25):  # 01:00 ~ 24:00
+        t_end_utc = midnight_utc + timedelta(hours=h)
+        t_end_jst = midnight_jst + timedelta(hours=h)
+        chart_labels.append("24:00" if h == 24 else t_end_jst.strftime("%H:%M"))
+        if t_end_utc <= now:
+            chart_now_idx = h - 1
+            snap_end = db.get_channel_snapshot_at(channel_id, t_end_utc)
+            snap_start = db.get_channel_snapshot_at(channel_id, t_end_utc - timedelta(hours=1))
             if snap_end and snap_start:
                 chart_deltas.append(max(0, int(snap_end["view_count"]) - int(snap_start["view_count"])))
             else:
                 chart_deltas.append(None)
         else:
             chart_deltas.append(None)
+
     chart_labels_json = json.dumps(chart_labels, ensure_ascii=False)
     chart_deltas_json = json.dumps(chart_deltas)
 
@@ -198,6 +204,7 @@ def main() -> int:
         ai_comment=ai_comment,
         chart_labels_json=chart_labels_json,
         chart_deltas_json=chart_deltas_json,
+        chart_now_idx=chart_now_idx,
     )
 
     docs_dir = config.docs_dir
