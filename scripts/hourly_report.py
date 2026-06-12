@@ -161,16 +161,21 @@ def main() -> int:
 
     for h in range(1, 25):  # 01:00 ~ 24:00
         t_end_utc = midnight_utc + timedelta(hours=h)
+        t_start_utc = t_end_utc - timedelta(hours=1)
         t_end_jst = midnight_jst + timedelta(hours=h)
         chart_labels.append("24:00" if h == 24 else t_end_jst.strftime("%H:%M"))
         if t_end_utc <= now:
             chart_now_idx = h - 1
-            snap_end = db.get_channel_snapshot_at(channel_id, t_end_utc)
-            snap_start = db.get_channel_snapshot_at(channel_id, t_end_utc - timedelta(hours=1))
-            if snap_end and snap_start:
-                chart_deltas.append(max(0, int(snap_end["view_count"]) - int(snap_start["view_count"])))
-            else:
-                chart_deltas.append(None)
+            bucket_delta = 0
+            has_data = False
+            for r in rows:
+                snap_e = db.get_video_snapshot_at(r.video_id, t_end_utc)
+                if snap_e:
+                    has_data = True
+                    snap_s = db.get_video_snapshot_at(r.video_id, t_start_utc)
+                    if snap_s and int(snap_e["id"]) != int(snap_s["id"]):
+                        bucket_delta += max(0, int(snap_e["view_count"]) - int(snap_s["view_count"]))
+            chart_deltas.append(bucket_delta if has_data else None)
         else:
             chart_deltas.append(None)
 

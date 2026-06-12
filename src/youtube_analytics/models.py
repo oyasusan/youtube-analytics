@@ -201,6 +201,7 @@ class ReportData:
     top_today: list[GrowthMetrics]
     top_week: list[GrowthMetrics]
     top_month: list[GrowthMetrics]
+    top_by_views: list[GrowthMetrics]
     longtail_videos: list[GrowthMetrics]
     hit_predictions: list[GrowthMetrics]
     content_type_stats: list[ContentTypeStats]

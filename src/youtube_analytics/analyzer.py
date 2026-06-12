@@ -523,8 +523,14 @@ class StatisticalAnalyzer:
         now = datetime.utcnow()
         today = now.strftime("%Y-%m-%d")
 
-        channel_metrics = self.compute_channel_metrics(channel_id, channel_name)
         all_metrics = self.compute_growth_metrics(channel_id)
+        channel_metrics = self.compute_channel_metrics(channel_id, channel_name)
+
+        # Override channel-level view stats with per-video sums to avoid API lag
+        channel_metrics.current_views = sum(m.current_views for m in all_metrics)
+        channel_metrics.delta_views_24h = sum(m.delta_24h for m in all_metrics)
+        channel_metrics.delta_views_7d = sum(m.delta_7d for m in all_metrics)
+        channel_metrics.delta_views_30d = sum(m.delta_30d for m in all_metrics)
 
         shorts_gr, regular_gr = self.shorts_vs_regular_growth(all_metrics)
 
@@ -537,6 +543,7 @@ class StatisticalAnalyzer:
             top_today=self.top_by_delta(all_metrics, "24h", 10),
             top_week=self.top_by_delta(all_metrics, "7d", 10),
             top_month=self.top_by_delta(all_metrics, "30d", 10),
+            top_by_views=sorted(all_metrics, key=lambda m: m.current_views, reverse=True)[:10],
             longtail_videos=self.longtail_videos(all_metrics),
             hit_predictions=self.hit_predictions(all_metrics),
             content_type_stats=self.content_type_stats(all_metrics),

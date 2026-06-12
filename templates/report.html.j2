@@ -174,6 +174,35 @@
     {% endfor %}
   </div>
 
+  <!-- Cumulative Views TOP10 -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">👑 累計再生数 TOP10</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th><th>タイトル</th><th>種別</th><th>累計再生数</th>
+            <th>+24h</th><th>+7日</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in data.top_by_views %}
+          <tr>
+            <td class="text-muted">{{ loop.index }}</td>
+            <td><a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none">{{ v.title[:50] }}</a></td>
+            <td><span class="badge {% if v.video_type == 'shorts' %}video-badge-shorts{% else %}video-badge-regular{% endif %}">{{ v.video_type }}</span></td>
+            <td>{{ v.current_views | format_int }}</td>
+            <td class="kpi-delta-pos">+{{ v.delta_24h | format_int }}</td>
+            <td class="text-muted">+{{ v.delta_7d | format_int }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted">データなし</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- Content Type + Shorts -->
   <div class="row g-3 mb-4">
     <div class="col-12 col-md-6">
