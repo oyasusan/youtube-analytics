@@ -17,8 +17,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-cov>=5.0.0",
     "ruff>=0.5.0",
     "mypy>=1.10.0",
 ]
@@ -58,13 +56,3 @@ warn_return_any = false
 module = "youtube_analytics.visualizer"
 ignore_errors = true
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "--cov=src/youtube_analytics --cov-report=term-missing -v"
-
-[tool.coverage.run]
-source = ["src/youtube_analytics"]
-omit = ["tests/*"]
