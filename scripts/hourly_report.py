@@ -119,7 +119,10 @@ def main() -> int:
         snap_latest_id: int = snap_latest["id"]
         latest_dt = datetime.fromisoformat(str(snap_latest["recorded_at"]))
 
-        def _delta(hours: int, _vid: str = vid, _cur: int = cur_views, _lid: int = snap_latest_id, _ldt: datetime = latest_dt) -> int:
+        def _delta(  # noqa: E501
+            hours: int, _vid: str = vid, _cur: int = cur_views,
+            _lid: int = snap_latest_id, _ldt: datetime = latest_dt,
+        ) -> int:
             s = db.get_video_snapshot_at(_vid, _ldt - timedelta(hours=hours))
             if s and int(s["id"]) != _lid:
                 return max(0, _cur - int(s["view_count"]))
