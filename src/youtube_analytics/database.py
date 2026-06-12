@@ -363,6 +363,17 @@ class DatabaseManager:
                 (video_id,),
             ).fetchone()
 
+    def get_oldest_video_snapshot(self, video_id: str) -> Optional[sqlite3.Row]:
+        with self.connect() as conn:
+            return conn.execute(
+                """
+                SELECT * FROM video_snapshots
+                WHERE video_id = ?
+                ORDER BY recorded_at ASC LIMIT 1
+                """,
+                (video_id,),
+            ).fetchone()
+
     def get_video_snapshots(
         self, video_id: str, since: datetime, until: Optional[datetime] = None
     ) -> list[sqlite3.Row]:

@@ -161,16 +161,25 @@ class StatisticalAnalyzer:
             latest_dt = datetime.fromisoformat(str(latest["recorded_at"]))
             latest_id: int = latest["id"]
 
+            oldest = self.db.get_oldest_video_snapshot(video_id)
+            oldest_views: Optional[int] = int(oldest["view_count"]) if oldest else None
+            oldest_id: int = oldest["id"] if oldest else latest_id
+
             def delta_h(
                 h: int,
                 _vid: str = video_id,
                 _views: int = current_views,
                 _lid: int = latest_id,
                 _ldt: datetime = latest_dt,
+                _oid: int = oldest_id,
+                _ov: Optional[int] = oldest_views,
             ) -> int:
                 snap = self.db.get_video_snapshot_at(_vid, _ldt - timedelta(hours=h))
                 if snap and int(snap["id"]) != _lid:
                     return max(0, _views - int(snap["view_count"]))
+                # 指定期間前のスナップなし（動画が公開前だった等）→ 最古スナップとの差
+                if snap is None and _ov is not None and _oid != _lid:
+                    return max(0, _views - _ov)
                 return 0
 
             d1h = delta_h(1)

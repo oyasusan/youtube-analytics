@@ -32,42 +32,47 @@ random.seed(42)
 
 _VIDEOS: list[dict] = [
     # (video_id, title, video_type, content_type, days_ago, base_views, like_ratio, comment_ratio)
+    # ── MV (公開日: 5日〜60日前) ─────────────────────────────────────────────
     {"id": "tv_mv_001", "title": "テストグループ / 夢色ロマンス｜Music Video",
-     "type": "regular", "content": "mv", "days_ago": 28,
-     "base_views": 18000, "like_r": 0.06, "comment_r": 0.008},
+     "type": "regular", "content": "mv", "days_ago": 60,
+     "base_views": 42000, "like_r": 0.06, "comment_r": 0.008},
     {"id": "tv_mv_002", "title": "テストグループ / 君のそばで｜Music Video",
-     "type": "regular", "content": "mv", "days_ago": 14,
-     "base_views": 9500, "like_r": 0.07, "comment_r": 0.010},
+     "type": "regular", "content": "mv", "days_ago": 45,
+     "base_views": 28000, "like_r": 0.07, "comment_r": 0.010},
     {"id": "tv_mv_003", "title": "テストグループ / 恋のシグナル｜Music Video",
      "type": "regular", "content": "mv", "days_ago": 5,
      "base_views": 4200, "like_r": 0.08, "comment_r": 0.012},
+    # ── Live ─────────────────────────────────────────────────────────────────
     {"id": "tv_live_001", "title": "テストグループ｜春のワンマンライブ 2026",
-     "type": "regular", "content": "live", "days_ago": 20,
-     "base_views": 7800, "like_r": 0.05, "comment_r": 0.009},
+     "type": "regular", "content": "live", "days_ago": 50,
+     "base_views": 18000, "like_r": 0.05, "comment_r": 0.009},
     {"id": "tv_live_002", "title": "テストグループ / アコースティックライブ｜Live Video",
      "type": "regular", "content": "live", "days_ago": 10,
      "base_views": 3200, "like_r": 0.06, "comment_r": 0.007},
+    # ── Performance ───────────────────────────────────────────────────────────
     {"id": "tv_perf_001", "title": "テストグループ / 夢色ロマンス｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 26,
-     "base_views": 2100, "like_r": 0.04, "comment_r": 0.005},
+     "type": "regular", "content": "other", "days_ago": 58,
+     "base_views": 5200, "like_r": 0.04, "comment_r": 0.005},
     {"id": "tv_perf_002", "title": "テストグループ / 君のそばで｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 12,
-     "base_views": 1400, "like_r": 0.04, "comment_r": 0.004},
+     "type": "regular", "content": "other", "days_ago": 43,
+     "base_views": 3800, "like_r": 0.04, "comment_r": 0.004},
     {"id": "tv_perf_003", "title": "テストグループ / 恋のシグナル｜Performance Video",
      "type": "regular", "content": "other", "days_ago": 4,
      "base_views": 800, "like_r": 0.05, "comment_r": 0.006},
     {"id": "tv_perf_004", "title": "テストグループ / ときめきメロディー｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 18,
-     "base_views": 1600, "like_r": 0.04, "comment_r": 0.005},
+     "type": "regular", "content": "other", "days_ago": 35,
+     "base_views": 2800, "like_r": 0.04, "comment_r": 0.005},
     {"id": "tv_perf_005", "title": "テストグループ / ハートブレイカー｜Performance Video",
      "type": "regular", "content": "other", "days_ago": 22,
      "base_views": 1900, "like_r": 0.04, "comment_r": 0.005},
+    # ── Making / Rec ──────────────────────────────────────────────────────────
     {"id": "tv_rec_001", "title": "テストグループ / 春の記録映像｜Rec Video",
-     "type": "regular", "content": "making", "days_ago": 15,
-     "base_views": 5600, "like_r": 0.05, "comment_r": 0.007},
+     "type": "regular", "content": "making", "days_ago": 48,
+     "base_views": 9500, "like_r": 0.05, "comment_r": 0.007},
     {"id": "tv_rec_002", "title": "テストグループ / メンバー密着｜Behind the Scenes",
      "type": "regular", "content": "making", "days_ago": 7,
      "base_views": 3100, "like_r": 0.06, "comment_r": 0.009},
+    # ── Announcement ─────────────────────────────────────────────────────────
     {"id": "tv_ann_001", "title": "テストグループ / ニューシングル発売告知",
      "type": "regular", "content": "announcement", "days_ago": 8,
      "base_views": 2400, "like_r": 0.04, "comment_r": 0.006},
@@ -75,9 +80,9 @@ _VIDEOS: list[dict] = [
      "type": "regular", "content": "announcement", "days_ago": 3,
      "base_views": 1200, "like_r": 0.05, "comment_r": 0.008},
     {"id": "tv_other_001", "title": "テストグループ / オフショット公開！♡",
-     "type": "regular", "content": "other", "days_ago": 30,
-     "base_views": 3800, "like_r": 0.05, "comment_r": 0.006},
-    # Shorts
+     "type": "regular", "content": "other", "days_ago": 55,
+     "base_views": 7200, "like_r": 0.05, "comment_r": 0.006},
+    # ── Shorts ────────────────────────────────────────────────────────────────
     {"id": "tv_sh_001", "title": "今日の練習！🎵 #テストグループ #shorts",
      "type": "shorts", "content": "shorts", "days_ago": 2,
      "base_views": 12000, "like_r": 0.03, "comment_r": 0.002},
@@ -85,14 +90,14 @@ _VIDEOS: list[dict] = [
      "type": "shorts", "content": "shorts", "days_ago": 6,
      "base_views": 8500, "like_r": 0.03, "comment_r": 0.002},
     {"id": "tv_sh_003", "title": "ライブ名場面集🔥 #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 11,
-     "base_views": 6200, "like_r": 0.04, "comment_r": 0.003},
+     "type": "shorts", "content": "shorts", "days_ago": 40,
+     "base_views": 22000, "like_r": 0.04, "comment_r": 0.003},
     {"id": "tv_sh_004", "title": "新曲サビ先行公開🎤 #テストグループ #shorts",
      "type": "shorts", "content": "shorts", "days_ago": 16,
      "base_views": 15000, "like_r": 0.05, "comment_r": 0.003},
     {"id": "tv_sh_005", "title": "推しカメラ撮ってみた📸 #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 24,
-     "base_views": 4800, "like_r": 0.03, "comment_r": 0.002},
+     "type": "shorts", "content": "shorts", "days_ago": 52,
+     "base_views": 11000, "like_r": 0.03, "comment_r": 0.002},
 ]
 
 
@@ -128,7 +133,8 @@ def main() -> None:
 
     # UTCの「現在時刻」を固定（最新スナップショット時刻）
     now_utc = datetime(2026, 6, 12, 8, 0, 0)
-    start_utc = now_utc - timedelta(days=30)
+    max_days_ago = max(v["days_ago"] for v in _VIDEOS)
+    start_utc = now_utc - timedelta(days=max_days_ago)
 
     # ── Channel ───────────────────────────────────────────────────────────────
     db.upsert_channel(CHANNEL_ID, CHANNEL_NAME, PLAYLIST_ID)
@@ -151,8 +157,8 @@ def main() -> None:
 
     print(f"{len(_VIDEOS)} 本の動画を登録しました")
 
-    # ── Hourly snapshots (30 days × 24h = 720 points per entity) ─────────────
-    total_hours = 30 * 24
+    # ── Hourly snapshots (max_days × 24h per entity) ──────────────────────────
+    total_hours = max_days_ago * 24
     video_snaps: list[VideoSnapshot] = []
 
     for h in range(total_hours + 1):
