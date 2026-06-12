@@ -98,7 +98,7 @@ class Visualizer:
         if not hours:
             return None
 
-        fig, ax = plt.subplots(figsize=(10, 4))
+        fig, ax = plt.subplots(figsize=(12, 6))
         colors = [_PALETTE[0] if (d or 0) > 0 else "#cccccc" for d in deltas]
         ax.bar(hours, [d or 0 for d in deltas], color=colors, width=0.8)
         date_str = now_jst.strftime("%Y-%m-%d")
