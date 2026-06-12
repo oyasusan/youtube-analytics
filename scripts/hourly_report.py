@@ -140,9 +140,11 @@ def main() -> int:
             )
         )
 
-    # View deltas: channel-level snapshots (consistent with daily report)
-    delta_views_1h = ch_delta("view_count", prev_ch_1h)
-    delta_views_24h = ch_delta("view_count", prev_ch_24h)
+    # View totals/deltas: sum of per-video snapshots so the KPI always
+    # matches the rising-videos table (channel-level snapshots can lag)
+    total_views = sum(r.view_count for r in rows)
+    delta_views_1h = sum(r.delta_1h for r in rows)
+    delta_views_24h = sum(r.delta_24h for r in rows)
 
     top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:10]
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:10]
@@ -198,6 +200,7 @@ def main() -> int:
     content = template.render(
         channel_name=channel_name,
         latest_ch=latest_ch,
+        total_views=total_views,
         delta_subs_1h=delta_subs_1h,
         delta_views_1h=delta_views_1h,
         delta_subs_24h=delta_subs_24h,

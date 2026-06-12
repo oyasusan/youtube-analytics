@@ -80,12 +80,14 @@
     </div>
     <div class="col-6 col-md-3">
       <div class="kpi-card">
-        <div class="kpi-label">再生増加（1h）</div>
-        <div class="kpi-value {% if delta_views_1h > 0 %}kpi-delta-pos{% elif delta_views_1h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %}">{{ delta_views_1h | fmt_delta }}</div>
-        <div class="{% if delta_views_24h > 0 %}kpi-delta-pos{% elif delta_views_24h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small">
+        <div class="kpi-label">総再生数（累計）</div>
+        <div class="kpi-value">{{ total_views | format_int }}</div>
+        <div class="{% if delta_views_1h > 0 %}kpi-delta-pos{% elif delta_views_1h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small">
+          {{ delta_views_1h | fmt_delta }} (1h)
+        </div>
+        <div class="{% if delta_views_24h > 0 %}kpi-delta-pos{% elif delta_views_24h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small opacity-75">
           {{ delta_views_24h | fmt_delta }} (24h)
         </div>
-        <div class="text-muted small opacity-75">累計: {{ latest_ch["view_count"] | format_int }}</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
