@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 SCHEMA_VERSION = 1
 
 DDL = """
-PRAGMA journal_mode=WAL;
+PRAGMA journal_mode=DELETE;
 PRAGMA foreign_keys=ON;
 
 CREATE TABLE IF NOT EXISTS schema_version (

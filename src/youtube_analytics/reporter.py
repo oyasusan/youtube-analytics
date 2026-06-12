@@ -98,6 +98,14 @@ class Reporter:
 
         # Generate index page
         recent_reports = self.db.get_recent_reports(30)
+
+        # Fall back to DB if current run has no AI analysis (e.g. local regen without credentials)
+        if not data.ai_analysis:
+            row = self.db.get_latest_ai_analysis("daily_report")
+            if row:
+                data.ai_analysis = row["response"]
+                logger.info("Using cached AI analysis from DB for index page")
+
         index_template = self._env.get_template("index.html.j2")
         index_content = index_template.render(
             data=data,
