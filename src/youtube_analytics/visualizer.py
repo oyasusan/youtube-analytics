@@ -66,30 +66,48 @@ class Visualizer:
         ax.spines["right"].set_visible(False)
         return self._save(fig, "channel_views_trend.png")
 
-    # ── Channel growth rate ───────────────────────────────────────────────────
+    # ── Today's hourly view delta (0–23h JST) ────────────────────────────────
 
     def channel_growth_rate(self, channel_id: str, days: int = 30) -> Optional[str]:
-        summaries = self.db.get_daily_channel_summaries(channel_id, days)
-        if len(summaries) < 2:
+        """Hourly view delta for today (JST 0:00–23:00), replacing the old 30-day bar chart."""
+        _JST_OFFSET = timedelta(hours=9)
+        now_utc = datetime.utcnow()
+        now_jst = now_utc + _JST_OFFSET
+
+        # JST midnight → UTC
+        jst_midnight = now_jst.replace(hour=0, minute=0, second=0, microsecond=0)
+        utc_midnight = jst_midnight - _JST_OFFSET
+
+        hours: list[int] = []
+        deltas: list[Optional[int]] = []
+
+        for h in range(24):
+            snap_end_utc = utc_midnight + timedelta(hours=h + 1)
+            snap_start_utc = utc_midnight + timedelta(hours=h)
+            # Only compute for hours that have already passed
+            if snap_start_utc > now_utc:
+                break
+            snap_end = self.db.get_channel_snapshot_at(channel_id, snap_end_utc)
+            snap_start = self.db.get_channel_snapshot_at(channel_id, snap_start_utc)
+            hours.append(h)
+            if snap_end and snap_start and snap_end["id"] != snap_start["id"]:
+                deltas.append(max(0, int(snap_end["view_count"]) - int(snap_start["view_count"])))
+            else:
+                deltas.append(0)
+
+        if not hours:
             return None
 
-        df = pd.DataFrame(
-            [(r["date"], r["view_delta"]) for r in summaries],
-            columns=["date", "view_delta"],
-        )
-        df["date"] = pd.to_datetime(df["date"])
-
         fig, ax = plt.subplots(figsize=(10, 4))
-        colors = [_PALETTE[0] if v >= 0 else _PALETTE[1] for v in df["view_delta"]]
-        ax.bar(df["date"], df["view_delta"], color=colors, width=0.8)
-        ax.set_title(f"日次再生数増加（過去{days}日）", fontsize=13, pad=10)
-        ax.set_xlabel("日付")
-        ax.set_ylabel("再生数増加")
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d"))
-        ax.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days // 10)))
-        fig.autofmt_xdate()
+        colors = [_PALETTE[0] if (d or 0) > 0 else "#cccccc" for d in deltas]
+        ax.bar(hours, [d or 0 for d in deltas], color=colors, width=0.8)
+        date_str = now_jst.strftime("%Y-%m-%d")
+        ax.set_title(f"時間別再生数増加（{date_str} JST）", fontsize=13, pad=10)
+        ax.set_xlabel("時刻（JST）")
+        ax.set_ylabel("再生数増加（回/時）")
+        ax.set_xticks(range(0, 24))
+        ax.set_xticklabels([f"{h}時" for h in range(24)], fontsize=7, rotation=45)
         ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
-        ax.axhline(0, color="black", linewidth=0.8)
         ax.grid(axis="y", alpha=0.3)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
