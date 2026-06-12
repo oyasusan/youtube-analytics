@@ -30,73 +30,73 @@ random.seed(42)
 
 # ── Video definitions ─────────────────────────────────────────────────────────
 
+# pub_hour_jst: 公開時刻（JST の時） — 時間帯別分析のために分散させる
 _VIDEOS: list[dict] = [
-    # (video_id, title, video_type, content_type, days_ago, base_views, like_ratio, comment_ratio)
-    # ── MV (公開日: 5日〜60日前) ─────────────────────────────────────────────
+    # ── MV ───────────────────────────────────────────────────────────────────
     {"id": "tv_mv_001", "title": "テストグループ / 夢色ロマンス｜Music Video",
-     "type": "regular", "content": "mv", "days_ago": 60,
+     "type": "regular", "content": "mv", "days_ago": 60, "pub_hour_jst": 18,
      "base_views": 42000, "like_r": 0.06, "comment_r": 0.008},
     {"id": "tv_mv_002", "title": "テストグループ / 君のそばで｜Music Video",
-     "type": "regular", "content": "mv", "days_ago": 45,
+     "type": "regular", "content": "mv", "days_ago": 45, "pub_hour_jst": 20,
      "base_views": 28000, "like_r": 0.07, "comment_r": 0.010},
     {"id": "tv_mv_003", "title": "テストグループ / 恋のシグナル｜Music Video",
-     "type": "regular", "content": "mv", "days_ago": 5,
+     "type": "regular", "content": "mv", "days_ago": 5, "pub_hour_jst": 19,
      "base_views": 4200, "like_r": 0.08, "comment_r": 0.012},
     # ── Live ─────────────────────────────────────────────────────────────────
     {"id": "tv_live_001", "title": "テストグループ｜春のワンマンライブ 2026",
-     "type": "regular", "content": "live", "days_ago": 50,
+     "type": "regular", "content": "live", "days_ago": 50, "pub_hour_jst": 21,
      "base_views": 18000, "like_r": 0.05, "comment_r": 0.009},
     {"id": "tv_live_002", "title": "テストグループ / アコースティックライブ｜Live Video",
-     "type": "regular", "content": "live", "days_ago": 10,
+     "type": "regular", "content": "live", "days_ago": 10, "pub_hour_jst": 20,
      "base_views": 3200, "like_r": 0.06, "comment_r": 0.007},
     # ── Performance ───────────────────────────────────────────────────────────
     {"id": "tv_perf_001", "title": "テストグループ / 夢色ロマンス｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 58,
+     "type": "regular", "content": "other", "days_ago": 58, "pub_hour_jst": 18,
      "base_views": 5200, "like_r": 0.04, "comment_r": 0.005},
     {"id": "tv_perf_002", "title": "テストグループ / 君のそばで｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 43,
+     "type": "regular", "content": "other", "days_ago": 43, "pub_hour_jst": 20,
      "base_views": 3800, "like_r": 0.04, "comment_r": 0.004},
     {"id": "tv_perf_003", "title": "テストグループ / 恋のシグナル｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 4,
+     "type": "regular", "content": "other", "days_ago": 4, "pub_hour_jst": 19,
      "base_views": 800, "like_r": 0.05, "comment_r": 0.006},
     {"id": "tv_perf_004", "title": "テストグループ / ときめきメロディー｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 35,
+     "type": "regular", "content": "other", "days_ago": 35, "pub_hour_jst": 12,
      "base_views": 2800, "like_r": 0.04, "comment_r": 0.005},
     {"id": "tv_perf_005", "title": "テストグループ / ハートブレイカー｜Performance Video",
-     "type": "regular", "content": "other", "days_ago": 22,
+     "type": "regular", "content": "other", "days_ago": 22, "pub_hour_jst": 15,
      "base_views": 1900, "like_r": 0.04, "comment_r": 0.005},
     # ── Making / Rec ──────────────────────────────────────────────────────────
     {"id": "tv_rec_001", "title": "テストグループ / 春の記録映像｜Rec Video",
-     "type": "regular", "content": "making", "days_ago": 48,
+     "type": "regular", "content": "making", "days_ago": 48, "pub_hour_jst": 12,
      "base_views": 9500, "like_r": 0.05, "comment_r": 0.007},
     {"id": "tv_rec_002", "title": "テストグループ / メンバー密着｜Behind the Scenes",
-     "type": "regular", "content": "making", "days_ago": 7,
+     "type": "regular", "content": "making", "days_ago": 7, "pub_hour_jst": 19,
      "base_views": 3100, "like_r": 0.06, "comment_r": 0.009},
     # ── Announcement ─────────────────────────────────────────────────────────
     {"id": "tv_ann_001", "title": "テストグループ / ニューシングル発売告知",
-     "type": "regular", "content": "announcement", "days_ago": 8,
+     "type": "regular", "content": "announcement", "days_ago": 8, "pub_hour_jst": 10,
      "base_views": 2400, "like_r": 0.04, "comment_r": 0.006},
     {"id": "tv_ann_002", "title": "テストグループ / ワンマンライブ開催告知",
-     "type": "regular", "content": "announcement", "days_ago": 3,
+     "type": "regular", "content": "announcement", "days_ago": 3, "pub_hour_jst": 10,
      "base_views": 1200, "like_r": 0.05, "comment_r": 0.008},
     {"id": "tv_other_001", "title": "テストグループ / オフショット公開！♡",
-     "type": "regular", "content": "other", "days_ago": 55,
+     "type": "regular", "content": "other", "days_ago": 55, "pub_hour_jst": 16,
      "base_views": 7200, "like_r": 0.05, "comment_r": 0.006},
     # ── Shorts ────────────────────────────────────────────────────────────────
     {"id": "tv_sh_001", "title": "今日の練習！🎵 #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 2,
+     "type": "shorts", "content": "shorts", "days_ago": 2, "pub_hour_jst": 22,
      "base_views": 12000, "like_r": 0.03, "comment_r": 0.002},
     {"id": "tv_sh_002", "title": "メンバー紹介してみた♡ #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 6,
+     "type": "shorts", "content": "shorts", "days_ago": 6, "pub_hour_jst": 22,
      "base_views": 8500, "like_r": 0.03, "comment_r": 0.002},
     {"id": "tv_sh_003", "title": "ライブ名場面集🔥 #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 40,
+     "type": "shorts", "content": "shorts", "days_ago": 40, "pub_hour_jst": 21,
      "base_views": 22000, "like_r": 0.04, "comment_r": 0.003},
     {"id": "tv_sh_004", "title": "新曲サビ先行公開🎤 #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 16,
+     "type": "shorts", "content": "shorts", "days_ago": 16, "pub_hour_jst": 18,
      "base_views": 15000, "like_r": 0.05, "comment_r": 0.003},
     {"id": "tv_sh_005", "title": "推しカメラ撮ってみた📸 #テストグループ #shorts",
-     "type": "shorts", "content": "shorts", "days_ago": 52,
+     "type": "shorts", "content": "shorts", "days_ago": 52, "pub_hour_jst": 15,
      "base_views": 11000, "like_r": 0.03, "comment_r": 0.002},
 ]
 
@@ -141,7 +141,11 @@ def main() -> None:
 
     # ── Videos ───────────────────────────────────────────────────────────────
     for vdef in _VIDEOS:
-        published = now_utc - timedelta(days=vdef["days_ago"])
+        # pub_hour_jst をJSTとして扱い、UTCに変換して公開時刻を決定
+        pub_jst_hour = vdef.get("pub_hour_jst", 18)
+        published = (now_utc - timedelta(days=vdef["days_ago"])).replace(
+            hour=(pub_jst_hour - 9) % 24, minute=0, second=0, microsecond=0
+        )
         video = Video(
             video_id=vdef["id"],
             channel_id=CHANNEL_ID,
