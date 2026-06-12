@@ -174,23 +174,24 @@
 
   <!-- Rising Videos -->
   <div class="section mb-4">
-    <h4 class="mb-3">🚀 急上昇動画 TOP10（24h）</h4>
+    <h4 class="mb-3">🚀 急上昇動画 TOP10（24h 再生増加順）</h4>
     <div class="table-responsive">
       <table class="table table-sm table-dark-custom align-middle mb-0">
-        <thead><tr><th>#</th><th>タイトル</th><th>+24h</th><th>勢い</th></tr></thead>
+        <thead><tr><th>#</th><th>タイトル</th><th class="text-end">累計再生</th><th class="text-end kpi-delta-pos">+24h</th><th class="text-end" style="color:#8b949e;">勢い</th></tr></thead>
         <tbody>
-          {% for v in data.rising_videos[:10] %}
+          {% for v in data.top_today %}
           <tr>
             <td class="text-muted">{{ loop.index }}</td>
             <td>
               <a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank">{{ v.title[:35] }}{% if v.title | length > 35 %}…{% endif %}</a>
               <br><span class="badge {% if v.video_type == 'shorts' %}badge-shorts{% else %}badge-regular{% endif %} small">{{ v.video_type }}</span>
             </td>
-            <td class="kpi-delta-pos">+{{ v.delta_24h | format_int }}</td>
-            <td>{{ v.momentum_index | format_float2 }}</td>
+            <td class="text-end text-muted">{{ v.current_views | format_int }}</td>
+            <td class="text-end kpi-delta-pos">+{{ v.delta_24h | format_int }}</td>
+            <td class="text-end" style="color:#8b949e;">{{ v.momentum_index | format_float2 }}</td>
           </tr>
           {% else %}
-          <tr><td colspan="4" class="text-center text-muted">データなし</td></tr>
+          <tr><td colspan="5" class="text-center text-muted">データなし</td></tr>
           {% endfor %}
         </tbody>
       </table>
