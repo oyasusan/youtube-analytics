@@ -80,7 +80,7 @@
     </div>
     <div class="col-6 col-md-3">
       <div class="kpi-card">
-        <div class="kpi-label">総再生数</div>
+        <div class="kpi-label">総再生数（累計）</div>
         <div class="kpi-value">{{ latest_ch["view_count"] | format_int }}</div>
         <div class="{% if delta_views_1h > 0 %}kpi-delta-pos{% elif delta_views_1h < 0 %}kpi-delta-neg{% else %}kpi-delta-zero{% endif %} small">
           {{ delta_views_1h | fmt_delta }} (1h)
