@@ -26,12 +26,12 @@
 
 ---
 
-## 📉 急減速動画 TOP10
+## 📉 急減速動画 TOP10（24h 再生増加が少ない順）
 
-| # | タイトル | 種別 | 7日増加 | 24h増加 | 差分 |
-|---|--------|------|--------|--------|------|
-{% for v in data.declining_videos[:10] %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.video_type }} | {{ v.delta_7d | format_int }} | {{ v.delta_24h | format_int }} | {{ (v.delta_7d - v.delta_24h * 7) | format_int }} |
-{% else %}| — | データなし | — | — | — | — |
+| # | タイトル | 種別 | 24h増加 | 累計再生 |
+|---|--------|------|--------|--------|
+{% for v in data.declining_videos[:10] %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.video_type }} | +{{ v.delta_24h | format_int }} | {{ v.current_views | format_int }} |
+{% else %}| — | データなし | — | — | — |
 {% endfor %}
 
 ---

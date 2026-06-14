@@ -362,12 +362,8 @@ class StatisticalAnalyzer:
     def declining_videos(
         self, metrics: list[GrowthMetrics], n: int = 10
     ) -> list[GrowthMetrics]:
-        """Videos that were growing 7d ago but have slowed in the past 24h."""
-        candidates = [
-            m for m in metrics
-            if m.delta_7d > 1000 and m.delta_24h < m.delta_7d / 14
-        ]
-        return sorted(candidates, key=lambda m: m.delta_7d - m.delta_24h * 7, reverse=True)[:n]
+        """Return bottom-N videos sorted by 24h view delta (ascending)."""
+        return sorted(metrics, key=lambda m: m.delta_24h)[:n]
 
     def longtail_videos(self, metrics: list[GrowthMetrics], n: int = 10) -> list[GrowthMetrics]:
         return sorted([m for m in metrics if m.is_longtail], key=lambda m: m.delta_7d, reverse=True)[:n]
