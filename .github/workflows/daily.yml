@@ -1,9 +1,7 @@
 name: Daily Analysis and Report
 
 on:
-  schedule:
-    - cron: '43 0 * * *'  # Daily at 00:43 UTC (09:43 JST)
-  workflow_dispatch:       # Manual trigger
+  workflow_dispatch:       # Manual trigger only (schedule disabled)
 
 jobs:
   analyze:
