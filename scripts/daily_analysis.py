@@ -140,10 +140,12 @@ def main() -> int:
     # ── Compile full report data ───────────────────────────────────────────────
     report_data = analyzer.compile_report_data(channel_id, channel_name)
 
-    # ── Hourly chart data (00:00–24:00 JST) ──────────────────────────────────
+    # ── Hourly chart data (00:00–24:00 JST, previous day) ────────────────────
     now_utc = datetime.utcnow()
     now_jst = now_utc + timedelta(hours=9)
-    midnight_jst = now_jst.replace(hour=0, minute=0, second=0, microsecond=0)
+    # Use yesterday (the day before report generation) as the chart target date
+    yesterday_jst = now_jst.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+    midnight_jst = yesterday_jst
     midnight_utc = midnight_jst - timedelta(hours=9)
 
     chart_labels: list[str] = []
@@ -169,6 +171,7 @@ def main() -> int:
 
     report_data.hourly_chart_labels_json = json.dumps(chart_labels, ensure_ascii=False)
     report_data.hourly_chart_deltas_json = json.dumps(chart_deltas)
+    report_data.hourly_chart_date = midnight_jst.strftime("%Y-%m-%d")
     logger.info("Hourly chart data computed (%d buckets)", len(chart_labels))
 
     # ── Generate visualizations ───────────────────────────────────────────────

@@ -214,3 +214,4 @@ class ReportData:
     graph_paths: dict[str, str] = field(default_factory=dict)
     hourly_chart_labels_json: str = ""
     hourly_chart_deltas_json: str = ""
+    hourly_chart_date: str = ""
