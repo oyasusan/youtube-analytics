@@ -20,7 +20,7 @@
 
 | # | タイトル | 種別 | 再生数 | +24h | 勢い指数 | バズスコア |
 |---|--------|------|--------|------|---------|----------|
-{% for v in data.rising_videos[:10] %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.video_type }} | {{ v.current_views | format_int }} | +{{ v.delta_24h | format_int }} | {{ v.momentum_index | format_float2 }} | {{ v.buzz_score | format_float2 }} |
+{% for v in data.top_today %}| {{ loop.index }} | [{{ v.title[:40] }}]({{ "https://www.youtube.com/watch?v=" }}{{ v.video_id }}) | {{ v.video_type }} | {{ v.current_views | format_int }} | +{{ v.delta_24h | format_int }} | {{ v.momentum_index | format_float2 }} | {{ v.buzz_score | format_float2 }} |
 {% else %}| — | データなし | — | — | — | — | — |
 {% endfor %}
 

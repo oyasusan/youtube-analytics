@@ -161,7 +161,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for v in data.rising_videos[:10] %}
+          {% for v in data.top_today %}
           <tr>
             <td class="text-muted">{{ loop.index }}</td>
             <td><a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none">{{ v.title[:50] }}</a></td>
