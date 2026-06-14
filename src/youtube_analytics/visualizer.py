@@ -255,7 +255,7 @@ class Visualizer:
 
         fig, ax = plt.subplots(figsize=(12, 4))
         ax.bar(hours, views, color=_PALETTE[5], width=0.8)
-        ax.set_title("時間帯別 平均再生数（JST）", fontsize=13, pad=10)
+        ax.set_title("投稿時間帯別 平均再生数（JST）", fontsize=13, pad=10)
         ax.set_xlabel("投稿時刻（時）")
         ax.set_ylabel("平均再生数")
         ax.set_xticks(range(0, 24, 2))
