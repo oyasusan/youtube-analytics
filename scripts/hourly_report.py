@@ -71,9 +71,9 @@ class LiveVideoRow:
     title: str
     video_type: str
     view_count: int
-    delta_1h: int
-    delta_3h: int
-    delta_24h: int
+    delta_1h: int | None
+    delta_3h: int | None
+    delta_24h: int | None
 
 
 def main() -> int:
@@ -122,9 +122,11 @@ def main() -> int:
         def _delta(  # noqa: E501
             hours: int, _vid: str = vid, _cur: int = cur_views,
             _lid: int = snap_latest_id, _ldt: datetime = latest_dt,
-        ) -> int:
+        ) -> int | None:
             s = db.get_video_snapshot_at(_vid, _ldt - timedelta(hours=hours))
-            if s and int(s["id"]) != _lid:
+            if s is None:
+                return None
+            if int(s["id"]) != _lid:
                 return max(0, _cur - int(s["view_count"]))
             return 0
 
@@ -143,10 +145,10 @@ def main() -> int:
     # View totals/deltas: sum of per-video snapshots so the KPI always
     # matches the rising-videos table (channel-level snapshots can lag)
     total_views = sum(r.view_count for r in rows)
-    delta_views_1h = sum(r.delta_1h for r in rows)
-    delta_views_24h = sum(r.delta_24h for r in rows)
+    delta_views_1h = sum(r.delta_1h or 0 for r in rows)
+    delta_views_24h = sum(r.delta_24h or 0 for r in rows)
 
-    top_rising = sorted(rows, key=lambda r: r.delta_1h, reverse=True)[:10]
+    top_rising = sorted(rows, key=lambda r: r.delta_1h or 0, reverse=True)[:10]
     top_by_views = sorted(rows, key=lambda r: r.view_count, reverse=True)[:10]
     generated_at = datetime.now(_JST).strftime("%Y-%m-%d %H:%M JST")
 
@@ -199,7 +201,7 @@ def main() -> int:
         autoescape=select_autoescape(["html"]),
     )
     env.filters["format_int"] = lambda v: f"{int(v):,}"
-    env.filters["fmt_delta"] = lambda v: (f"+{v:,}" if int(v) > 0 else f"{int(v):,}")
+    env.filters["fmt_delta"] = lambda v: "-" if v is None else (f"+{v:,}" if int(v) > 0 else f"{int(v):,}")
 
     template = env.get_template("live.html.j2")
     content = template.render(
