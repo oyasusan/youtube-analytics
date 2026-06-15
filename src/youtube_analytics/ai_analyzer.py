@@ -27,9 +27,6 @@ _ANALYSIS_PROMPT_TEMPLATE = """\
 ## 急上昇動画 TOP5（過去24時間）
 {rising_videos}
 
-## 急減速動画 TOP5
-{declining_videos}
-
 ## Shorts vs 通常動画
 - Shorts 30日平均成長率: {shorts_growth_rate:.2%}
 - 通常動画 30日平均成長率: {regular_growth_rate:.2%}
@@ -49,15 +46,13 @@ _ANALYSIS_PROMPT_TEMPLATE = """\
 
 2. **急上昇動画の深堀り分析**（なぜ伸びているのか仮説を立て考察）
 
-3. **急減速動画への対応策**（具体的なアクション提案）
+3. **コンテンツ戦略の提言**（データに基づいた優先順位付き提案）
 
-4. **コンテンツ戦略の提言**（データに基づいた優先順位付き提案）
+4. **Shorts活用最適化案**（現状の課題と改善方向）
 
-5. **Shorts活用最適化案**（現状の課題と改善方向）
+5. **注意すべき警告事項**（投稿頻度、依存リスク、成長鈍化など）
 
-6. **注意すべき警告事項**（投稿頻度、依存リスク、成長鈍化など）
-
-7. **推奨アクション TOP3**（最優先で実施すべき具体的な3つのアクション）
+6. **推奨アクション TOP3**（最優先で実施すべき具体的な3つのアクション）
 
 Markdownフォーマットで出力してください。
 """
@@ -113,7 +108,6 @@ def build_prompt(data: ReportData) -> str:
         posts_per_month=data.channel_metrics.posts_per_month,
         shorts_ratio=data.channel_metrics.shorts_ratio,
         rising_videos=_format_videos(data.rising_videos),
-        declining_videos=_format_videos(data.declining_videos),
         shorts_growth_rate=data.shorts_growth_rate,
         regular_growth_rate=data.regular_growth_rate,
         content_type_stats=_format_content_types(data.content_type_stats),

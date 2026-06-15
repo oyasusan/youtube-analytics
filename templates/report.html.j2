@@ -182,31 +182,6 @@
     </div>
   </div>
 
-  <!-- Declining Videos -->
-  <div class="card section-card p-4 mb-4">
-    <h4 class="mb-3">📉 急減速動画 TOP10（24h 再生増加が少ない順）</h4>
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr><th>#</th><th>タイトル</th><th>種別</th><th>累計再生</th><th>+24h</th></tr>
-        </thead>
-        <tbody>
-          {% for v in data.declining_videos[:10] %}
-          <tr>
-            <td class="text-muted">{{ loop.index }}</td>
-            <td><a href="https://www.youtube.com/watch?v={{ v.video_id }}" target="_blank" class="text-decoration-none">{{ v.title[:50] }}</a></td>
-            <td><span class="badge {% if v.video_type == 'shorts' %}video-badge-shorts{% else %}video-badge-regular{% endif %}">{{ v.video_type }}</span></td>
-            <td>{{ v.current_views | format_int }}</td>
-            <td class="kpi-delta-pos">+{{ v.delta_24h | format_int }}</td>
-          </tr>
-          {% else %}
-          <tr><td colspan="5" class="text-center text-muted">データなし</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
   <!-- Growth Rankings -->
   <div class="row g-3 mb-4">
     {% for period, title, key in [('top_today', data.report_date + ' TOP10 (24h)', 'delta_24h'), ('top_week', '今週 TOP10 (7日)', 'delta_7d'), ('top_month', '今月 TOP10 (30日)', 'delta_30d')] %}
