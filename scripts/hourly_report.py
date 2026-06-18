@@ -40,7 +40,7 @@ def _generate_live_comment(
         top3 = "\n".join(
             f"{i + 1}. 「{v.title[:30]}」 +{v.delta_1h:,}回"
             for i, v in enumerate(top_rising[:3])
-            if v.delta_1h > 0
+            if (v.delta_1h or 0) > 0
         ) or "（目立った変化なし）"
 
         prompt = (
