@@ -89,7 +89,7 @@ def main() -> int:
 
     channel_id: str = channel_row["channel_id"]
     channel_name: str = channel_row["channel_name"]
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     latest_ch = db.get_latest_channel_snapshot(channel_id)
     if not latest_ch:

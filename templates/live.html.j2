@@ -193,7 +193,7 @@
               <span class="badge {% if v.video_type == 'shorts' %}badge-shorts{% else %}badge-regular{% endif %} small">{{ v.video_type }}</span>
             </td>
             <td class="text-end">{{ v.view_count | format_int }}</td>
-            <td class="text-end {% if v.delta_1h > 0 %}kpi-delta-pos{% else %}kpi-delta-zero{% endif %}">
+            <td class="text-end {% if (v.delta_1h or 0) > 0 %}kpi-delta-pos{% else %}kpi-delta-zero{% endif %}">
               {{ v.delta_1h | fmt_delta }}
             </td>
             <td class="text-end text-muted">{{ v.delta_3h | fmt_delta }}</td>
@@ -233,7 +233,7 @@
               <span class="badge {% if v.video_type == 'shorts' %}badge-shorts{% else %}badge-regular{% endif %} small">{{ v.video_type }}</span>
             </td>
             <td class="text-end">{{ v.view_count | format_int }}</td>
-            <td class="text-end {% if v.delta_1h > 0 %}kpi-delta-pos{% else %}kpi-delta-zero{% endif %}">
+            <td class="text-end {% if (v.delta_1h or 0) > 0 %}kpi-delta-pos{% else %}kpi-delta-zero{% endif %}">
               {{ v.delta_1h | fmt_delta }}
             </td>
             <td class="text-end text-muted">{{ v.delta_24h | fmt_delta }}</td>
