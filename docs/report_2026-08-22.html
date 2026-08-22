@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空想ロマンス チャンネル分析 2026-08-22</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body { background: #f8f9fa; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .header-band { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 2.5rem 0 2rem; }
+  .kpi-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08); transition: transform .15s; }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-value { font-size: 1.8rem; font-weight: 700; }
+  .kpi-delta-pos { color: #28a745; font-weight: 600; }
+  .kpi-delta-neg { color: #dc3545; font-weight: 600; }
+  .section-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 1.5rem; }
+  .video-badge-shorts { background: #ff4b5c; color: white; }
+  .video-badge-regular { background: #4c9be8; color: white; }
+  .chart-img { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+  .ai-section { background: linear-gradient(135deg, #667eea22, #764ba222); border-left: 4px solid #667eea; border-radius: 0 8px 8px 0; }
+  table { font-size: .88rem; }
+  .table-hover tbody tr:hover { background: #f0f4ff; }
+  .footer { background: #1a1a2e; color: rgba(255,255,255,.6); padding: 1.5rem 0; margin-top: 3rem; }
+  .score-bar { height: 6px; background: #e9ecef; border-radius: 3px; }
+  .score-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #4c9be8, #667eea); }
+  .thead-header th { background: #d0d7de; color: #24292f; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header-band">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="mb-1 fw-bold">📊 空想ロマンス</h1>
+        <p class="mb-0 opacity-75">チャンネル分析レポート &nbsp;|&nbsp; 2026-08-22</p>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-light text-dark fs-6">自動生成</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">👥 登録者数</div>
+        <div class="kpi-value">1,020</div>
+        <div class="kpi-delta-pos small">
+          +0 (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">▶ 総再生数</div>
+        <div class="kpi-value">454,104</div>
+        <div class="kpi-delta-pos small">
+          +200 (24h)
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">🎬 動画本数</div>
+        <div class="kpi-value">296</div>
+        <div class="text-muted small">月間 24.00本</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card kpi-card h-100 p-3">
+        <div class="text-muted small mb-1">📱 Shorts比率</div>
+        <div class="kpi-value">77.7%</div>
+        <div class="text-muted small">週 5.54本</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hourly Views Chart -->
+  
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">📈 2026-08-22 時間別再生数増加</h4>
+    <canvas id="hourlyViewsChart" height="80"></canvas>
+    <script>
+    (function(){
+      var labels = ["01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00"];
+      var deltas = [7, 35, 2, 7, 6, 6, 5, 3, 0, 3, 4, 8, 7, 3, 4, 2, 2, 10, 10, 21, 8, 1, 4, 20];
+      new Chart(document.getElementById('hourlyViewsChart'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '再生数増加（回/時）',
+            data: deltas,
+            backgroundColor: deltas.map(function(v) {
+              return v === null ? 'rgba(200,200,200,0.3)' : 'rgba(76,155,232,0.75)';
+            }),
+            borderColor: deltas.map(function(v) {
+              return v === null ? 'rgba(200,200,200,0.5)' : '#4c9be8';
+            }),
+            borderWidth: 1,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  var v = ctx.raw;
+                  return v === null ? 'データなし' : '+' + v.toLocaleString() + ' 回';
+                }
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { maxRotation: 45 } },
+            y: {
+              min: 0,
+              ticks: { callback: function(v) { return v.toLocaleString() + ' 回'; } },
+              title: { display: true, text: '再生数増加（回/時）' }
+            }
+          }
+        }
+      });
+    })();
+    </script>
+  </div>
+  
+
+  <!-- Charts Row -->
+  
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">📈 グラフ</h4>
+    <div class="row g-3">
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/channel_views_trend.png" alt="channel_views_trend" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/posting_frequency.png" alt="posting_frequency" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/video_growth_comparison.png" alt="video_growth_comparison" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/shorts_ratio_trend.png" alt="shorts_ratio_trend" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/day_of_week_analysis.png" alt="day_of_week_analysis" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/hour_analysis.png" alt="hour_analysis" class="chart-img w-100">
+      </div>
+      
+      <div class="col-12 col-lg-6">
+        <img src="graphs/growth_rate_ranking.png" alt="growth_rate_ranking" class="chart-img w-100">
+      </div>
+      
+    </div>
+  </div>
+  
+
+  <!-- Rising Videos -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">🚀 急上昇動画 TOP10（過去24時間）</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="thead-header">
+          <tr>
+            <th>#</th><th>タイトル</th><th>種別</th><th>再生数</th>
+            <th>+24h</th><th>勢い指数</th><th>バズ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="text-muted">1</td>
+            <td><a href="https://www.youtube.com/watch?v=wNffzUSwqBA" target="_blank" class="text-decoration-none">空想ロマンス / あの夏のロマンス｜Live Video（2026/6/2 1.5周年記念公演）</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>1,409</td>
+            <td class="kpi-delta-pos">+13</td>
+            <td>1.87</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:2.7929696995690882%"></div></div>
+              <small>2.79</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">2</td>
+            <td><a href="https://www.youtube.com/watch?v=fUEq9TT7_Vk" target="_blank" class="text-decoration-none">空想ロマンス / 空想アライズ｜Live Video（2026/6/2 1.5周年記念公演）</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>410</td>
+            <td class="kpi-delta-pos">+9</td>
+            <td>1.50</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:6.723010441548989%"></div></div>
+              <small>6.72</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">3</td>
+            <td><a href="https://www.youtube.com/watch?v=IhPjExCmDs0" target="_blank" class="text-decoration-none">空想ロマンス / ラブ・ロマンスに焦がれたい｜Performance Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>2,325</td>
+            <td class="kpi-delta-pos">+8</td>
+            <td>2.45</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:1.0357851400413767%"></div></div>
+              <small>1.04</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">4</td>
+            <td><a href="https://www.youtube.com/watch?v=glL3lXnMgr0" target="_blank" class="text-decoration-none">空想ロマンス / ロマンス♡レスキュー隊｜Live Video（2026/6/2 1.5周年記念公演</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>828</td>
+            <td class="kpi-delta-pos">+7</td>
+            <td>1.75</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:2.5572985819916765%"></div></div>
+              <small>2.56</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">5</td>
+            <td><a href="https://www.youtube.com/watch?v=v5qKVMbQnz4" target="_blank" class="text-decoration-none">空想ロマンス / ロマンス♡レスキュー隊｜Performance Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>2,564</td>
+            <td class="kpi-delta-pos">+7</td>
+            <td>2.08</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:0.8212564672654958%"></div></div>
+              <small>0.82</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">6</td>
+            <td><a href="https://www.youtube.com/watch?v=YXKZiQqgWcs" target="_blank" class="text-decoration-none">空想ロマンス / 狂愛ハルシネイト｜Music Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>24,179</td>
+            <td class="kpi-delta-pos">+7</td>
+            <td>1.71</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:0.08687735692795935%"></div></div>
+              <small>0.09</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">7</td>
+            <td><a href="https://www.youtube.com/watch?v=v5dMOO4BVPo" target="_blank" class="text-decoration-none">空想ロマンス / ハジマリノウタ｜Dance Practice</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>1,672</td>
+            <td class="kpi-delta-pos">+6</td>
+            <td>3.16</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:1.0803901340032644%"></div></div>
+              <small>1.08</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">8</td>
+            <td><a href="https://www.youtube.com/watch?v=w4rrH_8r2EM" target="_blank" class="text-decoration-none">空想ロマンス / ワンタップロマンス｜Live Video（2026/6/2 1.5周年記念公演）</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>1,147</td>
+            <td class="kpi-delta-pos">+5</td>
+            <td>0.89</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:3.7507491517443046%"></div></div>
+              <small>3.75</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">9</td>
+            <td><a href="https://www.youtube.com/watch?v=jusUQs-T3jc" target="_blank" class="text-decoration-none">空想ロマンス　オンラインサイン会1部</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>245</td>
+            <td class="kpi-delta-pos">+5</td>
+            <td>1.13</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:6.241874674751251%"></div></div>
+              <small>6.24</small>
+            </td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">10</td>
+            <td><a href="https://www.youtube.com/watch?v=o6R5vKSRO1A" target="_blank" class="text-decoration-none">空想ロマンス / 愛、丈夫｜Performance Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>1,274</td>
+            <td class="kpi-delta-pos">+5</td>
+            <td>1.65</td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:1.181978048693472%"></div></div>
+              <small>1.18</small>
+            </td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Growth Rankings -->
+  <div class="row g-3 mb-4">
+    
+    <div class="col-12 col-md-4">
+      <div class="card section-card p-3 h-100">
+        <h5 class="mb-3">🏆 2026-08-22 TOP10 (24h)</h5>
+        <ol class="ps-3">
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=wNffzUSwqBA" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / あの夏のロマンス｜Live Video（2…
+            </a>
+            <br><span class="kpi-delta-pos">+13</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=fUEq9TT7_Vk" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / 空想アライズ｜Live Video（202…
+            </a>
+            <br><span class="kpi-delta-pos">+9</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=IhPjExCmDs0" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ラブ・ロマンスに焦がれたい｜Perform…
+            </a>
+            <br><span class="kpi-delta-pos">+8</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=glL3lXnMgr0" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ロマンス♡レスキュー隊｜Live Vide…
+            </a>
+            <br><span class="kpi-delta-pos">+7</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=v5qKVMbQnz4" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ロマンス♡レスキュー隊｜Performan…
+            </a>
+            <br><span class="kpi-delta-pos">+7</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=YXKZiQqgWcs" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / 狂愛ハルシネイト｜Music Video
+            </a>
+            <br><span class="kpi-delta-pos">+7</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=v5dMOO4BVPo" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ハジマリノウタ｜Dance Practic…
+            </a>
+            <br><span class="kpi-delta-pos">+6</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=w4rrH_8r2EM" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ワンタップロマンス｜Live Video（…
+            </a>
+            <br><span class="kpi-delta-pos">+5</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=jusUQs-T3jc" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス　オンラインサイン会1部
+            </a>
+            <br><span class="kpi-delta-pos">+5</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=o6R5vKSRO1A" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / 愛、丈夫｜Performance Vide…
+            </a>
+            <br><span class="kpi-delta-pos">+5</span>
+          </li>
+          
+        </ol>
+      </div>
+    </div>
+    
+    <div class="col-12 col-md-4">
+      <div class="card section-card p-3 h-100">
+        <h5 class="mb-3">🏆 今週 TOP10 (7日)</h5>
+        <ol class="ps-3">
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=c6-JRSmMHJA" target="_blank" class="text-decoration-none text-dark">
+              かわいい子見つけた!! #空想ロマンス #日向琴音 #アイド…
+            </a>
+            <br><span class="kpi-delta-pos">+888</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=25nTBbFTF10" target="_blank" class="text-decoration-none text-dark">
+              楽しそうな子と目合った♡ #空想ロマンス #双葉うゆ #アイ…
+            </a>
+            <br><span class="kpi-delta-pos">+53</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=WG90m6E_Kz4" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / 檸檬の恋｜Live Video（2026/…
+            </a>
+            <br><span class="kpi-delta-pos">+51</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=_wZMekG2RMs" target="_blank" class="text-decoration-none text-dark">
+              これ地雷系の子？！爆レスくれたかわいい❤︎‪︎‬ ‪︎ #空…
+            </a>
+            <br><span class="kpi-delta-pos">+44</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=Op22I8x60j0" target="_blank" class="text-decoration-none text-dark">
+              浴衣オンラインサイン会1部
+            </a>
+            <br><span class="kpi-delta-pos">+43</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=33iDvsJ7hK0" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ハジマリノウタ｜Live Video（20…
+            </a>
+            <br><span class="kpi-delta-pos">+42</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=ShTocmI9iqE" target="_blank" class="text-decoration-none text-dark">
+              相性良いはずなのに君は拗ねてばっかり?!❤︎‪︎‬ ‪︎ #…
+            </a>
+            <br><span class="kpi-delta-pos">+40</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=bPDKT1hgmQQ" target="_blank" class="text-decoration-none text-dark">
+              目あった子めっちゃかわいい❤︎‪︎‬ ‪︎ #空想ロマンス …
+            </a>
+            <br><span class="kpi-delta-pos">+37</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=fn4pSEaVfQM" target="_blank" class="text-decoration-none text-dark">
+              またレス来ると思わなくて動揺した！！天才アイドル❤︎‪︎‬ …
+            </a>
+            <br><span class="kpi-delta-pos">+35</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=v5qKVMbQnz4" target="_blank" class="text-decoration-none text-dark">
+              空想ロマンス / ロマンス♡レスキュー隊｜Performan…
+            </a>
+            <br><span class="kpi-delta-pos">+35</span>
+          </li>
+          
+        </ol>
+      </div>
+    </div>
+    
+    <div class="col-12 col-md-4">
+      <div class="card section-card p-3 h-100">
+        <h5 class="mb-3">🏆 今月 TOP10 (30日)</h5>
+        <ol class="ps-3">
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=r_GM4AehNn8" target="_blank" class="text-decoration-none text-dark">
+              爆レスくれた子かわいい♩ #空想ロマンス #月野愛実 #アイ…
+            </a>
+            <br><span class="kpi-delta-pos">+1,822</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=fn4pSEaVfQM" target="_blank" class="text-decoration-none text-dark">
+              またレス来ると思わなくて動揺した！！天才アイドル❤︎‪︎‬ …
+            </a>
+            <br><span class="kpi-delta-pos">+1,789</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=bPDKT1hgmQQ" target="_blank" class="text-decoration-none text-dark">
+              目あった子めっちゃかわいい❤︎‪︎‬ ‪︎ #空想ロマンス …
+            </a>
+            <br><span class="kpi-delta-pos">+1,752</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=ShTocmI9iqE" target="_blank" class="text-decoration-none text-dark">
+              相性良いはずなのに君は拗ねてばっかり?!❤︎‪︎‬ ‪︎ #…
+            </a>
+            <br><span class="kpi-delta-pos">+1,694</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=c6-JRSmMHJA" target="_blank" class="text-decoration-none text-dark">
+              かわいい子見つけた!! #空想ロマンス #日向琴音 #アイド…
+            </a>
+            <br><span class="kpi-delta-pos">+1,668</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=Y8C6YZtgNPM" target="_blank" class="text-decoration-none text-dark">
+              一瞬目合った子かわいすぎる♡ #空想ロマンス #まゆぴ #ア…
+            </a>
+            <br><span class="kpi-delta-pos">+879</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=nwBWVGtJJMo" target="_blank" class="text-decoration-none text-dark">
+              飛び出してきたこの子かわいい⸝꙳.⋆ #空想ロマンス #月野…
+            </a>
+            <br><span class="kpi-delta-pos">+807</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=Rj0Q8jVhtGc" target="_blank" class="text-decoration-none text-dark">
+              ウインクにメロメロ？？❤︎‪︎‬ ‪︎ #空想ロマンス #月…
+            </a>
+            <br><span class="kpi-delta-pos">+701</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=25nTBbFTF10" target="_blank" class="text-decoration-none text-dark">
+              楽しそうな子と目合った♡ #空想ロマンス #双葉うゆ #アイ…
+            </a>
+            <br><span class="kpi-delta-pos">+507</span>
+          </li>
+          
+          <li class="mb-1 small">
+            <a href="https://www.youtube.com/watch?v=Op22I8x60j0" target="_blank" class="text-decoration-none text-dark">
+              浴衣オンラインサイン会1部
+            </a>
+            <br><span class="kpi-delta-pos">+460</span>
+          </li>
+          
+        </ol>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- Cumulative Views TOP10 -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">👑 累計再生数 TOP10</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="thead-header">
+          <tr>
+            <th>#</th><th>タイトル</th><th>種別</th><th>累計再生数</th>
+            <th>+24h</th><th>+7日</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="text-muted">1</td>
+            <td><a href="https://www.youtube.com/watch?v=YXKZiQqgWcs" target="_blank" class="text-decoration-none">空想ロマンス / 狂愛ハルシネイト｜Music Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>24,179</td>
+            <td class="kpi-delta-pos">+7</td>
+            <td class="text-muted">+17</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">2</td>
+            <td><a href="https://www.youtube.com/watch?v=aI_rfAloLJ0" target="_blank" class="text-decoration-none">空想ロマンス / ワンタップロマンス｜Music Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>12,907</td>
+            <td class="kpi-delta-pos">+3</td>
+            <td class="text-muted">+21</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">3</td>
+            <td><a href="https://www.youtube.com/watch?v=ryRWgWR3slU" target="_blank" class="text-decoration-none">ワンタップロマンス📱☝🏻💞💫⟡.·#空想ロマンス #ワンタップロマンス #shorts</a></td>
+            <td><span class="badge video-badge-shorts">shorts</span></td>
+            <td>11,639</td>
+            <td class="kpi-delta-pos">+0</td>
+            <td class="text-muted">+1</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">4</td>
+            <td><a href="https://www.youtube.com/watch?v=71i7nucx_YA" target="_blank" class="text-decoration-none">空想ロマンス / 平成ロマン｜Music Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>9,979</td>
+            <td class="kpi-delta-pos">+3</td>
+            <td class="text-muted">+21</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">5</td>
+            <td><a href="https://www.youtube.com/watch?v=9LmH1ASfgAA" target="_blank" class="text-decoration-none">空想ロマンス / 光差す方へ｜Rec Video</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>9,878</td>
+            <td class="kpi-delta-pos">+4</td>
+            <td class="text-muted">+6</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">6</td>
+            <td><a href="https://www.youtube.com/watch?v=t0YYwnbMXJ8" target="_blank" class="text-decoration-none">爆レスもらってニヤニヤとまりません₍ᐢ‥ᐢ₎ ♡ #空想ロマンス #山田寿々 #アイドル #推しカメ</a></td>
+            <td><span class="badge video-badge-shorts">shorts</span></td>
+            <td>9,229</td>
+            <td class="kpi-delta-pos">+1</td>
+            <td class="text-muted">+6</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">7</td>
+            <td><a href="https://www.youtube.com/watch?v=5mwIUOylTlA" target="_blank" class="text-decoration-none">可愛い子と目合ったꕀ♡ #空想ロマンス #月野愛実 #アイドル #推しカメラ</a></td>
+            <td><span class="badge video-badge-shorts">shorts</span></td>
+            <td>8,857</td>
+            <td class="kpi-delta-pos">+0</td>
+            <td class="text-muted">+0</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">8</td>
+            <td><a href="https://www.youtube.com/watch?v=tD7HeIgmWl8" target="_blank" class="text-decoration-none">かわいい子と目合った!!࣪ 𑊢♡ #空想ロマンス #ライブ #山田寿々 #アイドル #推しカメラ</a></td>
+            <td><span class="badge video-badge-shorts">shorts</span></td>
+            <td>7,188</td>
+            <td class="kpi-delta-pos">+0</td>
+            <td class="text-muted">+5</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">9</td>
+            <td><a href="https://www.youtube.com/watch?v=fXQAa7byyOs" target="_blank" class="text-decoration-none">空想ロマンス / 君のいない世界｜Dance Practice</a></td>
+            <td><span class="badge video-badge-regular">regular</span></td>
+            <td>7,121</td>
+            <td class="kpi-delta-pos">+2</td>
+            <td class="text-muted">+9</td>
+          </tr>
+          
+          <tr>
+            <td class="text-muted">10</td>
+            <td><a href="https://www.youtube.com/watch?v=3_PGRJq4pYA" target="_blank" class="text-decoration-none">爆レスおねえさんかわいい⸝⸝⸝♡ #空想ロマンス #ライブ #月野愛実 #アイドル #推しカメラ</a></td>
+            <td><span class="badge video-badge-shorts">shorts</span></td>
+            <td>7,023</td>
+            <td class="kpi-delta-pos">+1</td>
+            <td class="text-muted">+1</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Content Type + Shorts -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4 h-100">
+        <h4 class="mb-3">🎬 コンテンツタイプ別</h4>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead class="thead-header"><tr><th>タイプ</th><th>本数</th><th>平均再生数</th></tr></thead>
+            <tbody>
+              
+              <tr><td>shorts</td><td>233</td><td>1,379</td></tr>
+              
+              <tr><td>mv</td><td>6</td><td>9,185</td></tr>
+              
+              <tr><td>announcement</td><td>23</td><td>2,118</td></tr>
+              
+              <tr><td>live</td><td>31</td><td>849</td></tr>
+              
+              <tr><td>other</td><td>7</td><td>343</td></tr>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4 h-100">
+        <h4 class="mb-3">📱 Shorts vs 通常動画</h4>
+        <table class="table table-sm">
+          <thead class="thead-header"><tr><th></th><th>Shorts</th><th>通常動画</th></tr></thead>
+          <tbody>
+            <tr><td>30日平均成長率</td><td>0.7%</td><td>11.4%</td></tr>
+            <tr><td>動画本数</td>
+              <td>233本</td>
+              <td>67本</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hit Predictions -->
+  
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">🔮 ヒット予測（7日以内に急成長の可能性）</h4>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="thead-header"><tr><th>#</th><th>タイトル</th><th>予測スコア</th><th>現在再生数</th></tr></thead>
+        <tbody>
+          
+          <tr>
+            <td>1</td>
+            <td><a href="https://www.youtube.com/watch?v=GuFeAiNADwU" target="_blank" class="text-decoration-none">浴衣オンラインサイン会2部</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:85.0%"></div></div>
+              <small>85.00/100</small>
+            </td>
+            <td>199</td>
+          </tr>
+          
+          <tr>
+            <td>2</td>
+            <td><a href="https://www.youtube.com/watch?v=4D13TRTS3gY" target="_blank" class="text-decoration-none">空想ロマンス オンラインサイン会2部</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:85.0%"></div></div>
+              <small>85.00/100</small>
+            </td>
+            <td>267</td>
+          </tr>
+          
+          <tr>
+            <td>3</td>
+            <td><a href="https://www.youtube.com/watch?v=jusUQs-T3jc" target="_blank" class="text-decoration-none">空想ロマンス　オンラインサイン会1部</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:70.0%"></div></div>
+              <small>70.00/100</small>
+            </td>
+            <td>245</td>
+          </tr>
+          
+          <tr>
+            <td>4</td>
+            <td><a href="https://www.youtube.com/watch?v=Zntue3hUTpE" target="_blank" class="text-decoration-none">すずちゃんの爆レスかわいすぎる!!♡ #空想ロマンス #山田寿々 #アイドル #推しカメラ</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:25.0%"></div></div>
+              <small>25.00/100</small>
+            </td>
+            <td>48</td>
+          </tr>
+          
+          <tr>
+            <td>5</td>
+            <td><a href="https://www.youtube.com/watch?v=_wZMekG2RMs" target="_blank" class="text-decoration-none">これ地雷系の子？！爆レスくれたかわいい❤︎‪︎‬ ‪︎ #空想ロマンス #高梨由衣 #アイドル #推</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:10.0%"></div></div>
+              <small>10.00/100</small>
+            </td>
+            <td>494</td>
+          </tr>
+          
+          <tr>
+            <td>6</td>
+            <td><a href="https://www.youtube.com/watch?v=h9CV-NbBFpU" target="_blank" class="text-decoration-none">ニコニコでライブしてる子かわいい❤︎‪︎‬ ‪︎ #空想ロマンス #双葉うゆ #アイドル #推しカメ</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:10.0%"></div></div>
+              <small>10.00/100</small>
+            </td>
+            <td>326</td>
+          </tr>
+          
+          <tr>
+            <td>7</td>
+            <td><a href="https://www.youtube.com/watch?v=W6_WbrDdAD4" target="_blank" class="text-decoration-none">すずちゃんのウインクかわいい？？♡ #空想ロマンス #山田寿々 #アイドル #推しカメラ</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:10.0%"></div></div>
+              <small>10.00/100</small>
+            </td>
+            <td>417</td>
+          </tr>
+          
+          <tr>
+            <td>8</td>
+            <td><a href="https://www.youtube.com/watch?v=3S7pZaqTKEE" target="_blank" class="text-decoration-none">好きと認めさせるから覚悟して❤︎‪︎‬ ‪︎ #空想ロマンス #まゆぴ #アイドル #推しカメラ</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:10.0%"></div></div>
+              <small>10.00/100</small>
+            </td>
+            <td>182</td>
+          </tr>
+          
+          <tr>
+            <td>9</td>
+            <td><a href="https://www.youtube.com/watch?v=KVM84LK2VXE" target="_blank" class="text-decoration-none">すずちゃんと目あった♩ #空想ロマンス #山田寿々 #アイドル #推しカメラ</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:10.0%"></div></div>
+              <small>10.00/100</small>
+            </td>
+            <td>513</td>
+          </tr>
+          
+          <tr>
+            <td>10</td>
+            <td><a href="https://www.youtube.com/watch?v=QU_5zeDulCA" target="_blank" class="text-decoration-none">走ってる子かわいい笑笑 #空想ロマンス #瀬奈美玲 #アイドル #推しカメラ</a></td>
+            <td>
+              <div class="score-bar"><div class="score-fill" style="width:10.0%"></div></div>
+              <small>10.00/100</small>
+            </td>
+            <td>312</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+
+  <!-- Day/Hour Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="card section-card p-4">
+        <h4 class="mb-3">📅 曜日別投稿分析</h4>
+        <table class="table table-sm mb-0">
+          <thead class="thead-header"><tr><th>曜日</th><th>投稿数</th><th>平均再生数</th></tr></thead>
+          <tbody>
+            
+            <tr><td>月曜</td><td>41</td><td>1,642</td></tr>
+            
+            <tr><td>火曜</td><td>51</td><td>1,015</td></tr>
+            
+            <tr><td>水曜</td><td>41</td><td>1,630</td></tr>
+            
+            <tr><td>木曜</td><td>47</td><td>1,735</td></tr>
+            
+            <tr><td>金曜</td><td>37</td><td>1,535</td></tr>
+            
+            <tr><td>土曜</td><td>41</td><td>1,875</td></tr>
+            
+            <tr><td>日曜</td><td>42</td><td>1,259</td></tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- AI Analysis -->
+  <div class="card section-card p-4 mb-4">
+    <h4 class="mb-3">🤖 AI分析レポート</h4>
+    
+    <div class="alert alert-info mb-0">
+      AI分析は利用できません。環境変数でAIプロバイダーを設定してください（OLLAMA_BASE_URL / OPENAI_API_KEY / CLAUDE_API_KEY）。
+    </div>
+    
+  </div>
+
+</div><!-- /container -->
+
+<footer class="footer text-center">
+  <div class="container">
+    <small>Generated 2026-08-23 07:27 JST &nbsp;|&nbsp; 空想ロマンス Analytics System</small>
+  </div>
+</footer>
+</body>
+</html>
